@@ -7,6 +7,10 @@ const router = express.Router();
 
 const postController = new PostController();
 
+router.get("/list", authenction, postController.postList);
+router.get("/me", authenction, postController.userPosts);
+router.get("/feed", authenction, postController.userFeed);
+
 router.post("/create", authenction, multiUpload, postController.createPost);
 
 export default router;

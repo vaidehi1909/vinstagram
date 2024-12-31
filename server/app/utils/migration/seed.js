@@ -1,6 +1,6 @@
 import User from "../../models/user.js";
 import { connectDB } from "../../config/db.js";
-import authService from "../auth.js";
+import authService from "../../services/auth.js";
 import { faker } from "@faker-js/faker";
 
 // Function to generate fake user records using faker

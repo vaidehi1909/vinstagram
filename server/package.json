@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "node ./app/services/migration/seed.js"
+    "seed": "node ./app/utils/migration/seed.js"
   },
   "author": "vaidehi modi",
   "license": "ISC",

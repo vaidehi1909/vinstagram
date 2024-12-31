@@ -1,13 +1,26 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
-let postSchema = Schema(
+
+const mediaSchema = Schema({
+  type: { type: String, required: true },
+  url: { type: String, required: true },
+  thumbnailUrl: { type: String },
+});
+
+const postSchema = Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     caption: { type: String, default: "" },
     likesCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     tages: [String],
-    hasMedia: { type: Boolean, default: false },
+    media: [mediaSchema],
+    mainThumbnail: { type: String },
   },
   { timestamps: true }
 );
