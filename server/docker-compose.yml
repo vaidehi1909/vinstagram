@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV} # Pass NODE_ENV from .env or compose file
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: ${NODE_ENV} # Pass NODE_ENV to runtime
+    volumes:
+      - /usr/src/app/node_modules
+    restart: always

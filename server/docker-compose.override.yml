@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    environment:
+      NODE_ENV: development # Override to development
+    volumes:
+      - .:/usr/src/app # Mount local files for live development
+      - /usr/src/app/node_modules
+    command: npx nodemon index.js # Use nodemon for hot reloading

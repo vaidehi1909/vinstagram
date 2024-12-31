@@ -1,0 +1,8 @@
+.linear-gradient {
+  background: linear-gradient(#005986, #d8eeee);
+}
+
+.long-word {
+  word-break: break-all;
+  width: 8rem; /* adjust to your desired width */
+}
