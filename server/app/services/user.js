@@ -1,5 +1,3 @@
-import FollowerModel from "../models/follower.js";
-import NotificationModel from "../models/notification.js";
 import UserModel from "../models/user.js";
 import authService from "./auth.js";
 import bcrypt from "bcrypt";

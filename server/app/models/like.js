@@ -7,11 +7,15 @@ let likeSchema = Schema(
     user: { type: Schema.Types.ObjectId, ref: "User" },
     comment: { type: Schema.Types.ObjectId, ref: "Comment" },
     story: { type: Schema.Types.ObjectId, ref: "Story" },
+    type: { type: String, enum: ["post", "comment", "story"] },
   },
   { timestamps: true }
 );
 
-likeSchema.index({ post: 1, comment: 1, story: 1 });
+// Create a compound unique index
+likeSchema.index({ post: 1, user: 1 }, { unique: true });
+likeSchema.index({ comment: 1, user: 1 }, { unique: true });
+likeSchema.index({ story: 1, user: 1 }, { unique: true });
 const LikeModel = mongoose.model("Like", likeSchema);
 
 export default LikeModel;

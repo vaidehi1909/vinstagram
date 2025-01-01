@@ -8,16 +8,21 @@ import {
   TextField,
   Box,
   Avatar,
-  ImageList,
-  ImageListItem,
 } from "@mui/material";
-import { Add, Delete, Close } from "@mui/icons-material";
+import {
+  Add,
+  Delete,
+  Close,
+  ArrowBack,
+  ArrowForward,
+} from "@mui/icons-material";
 import { useCreatPostMutation } from "../../../redux/post/postApi";
 
 const PostForm = ({ onClose }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const [creatPost, { isLoading }] = useCreatPostMutation();
 
@@ -48,6 +53,9 @@ const PostForm = ({ onClose }) => {
       URL.revokeObjectURL(prevUrls[index].url);
       return prevUrls.filter((_, i) => i !== index);
     });
+    if (currentIndex >= previewUrls.length - 1) {
+      setCurrentIndex((prev) => Math.max(0, prev - 1));
+    }
   };
 
   const onShare = async () => {
@@ -71,6 +79,16 @@ const PostForm = ({ onClose }) => {
     }
   };
 
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % previewUrls.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex(
+      (prev) => (prev - 1 + previewUrls.length) % previewUrls.length
+    );
+  };
+
   return (
     <>
       <Box
@@ -81,7 +99,10 @@ const PostForm = ({ onClose }) => {
           mb: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center" }}
+          style={{ border: "none" }}
+        >
           <IconButton onClick={onClose} disabled={isLoading}>
             <Close />
           </IconButton>
@@ -100,144 +121,178 @@ const PostForm = ({ onClose }) => {
       </Box>
       <Card>
         <CardContent>
-          {previewUrls.length === 0 ? (
-            <Box
-              sx={{
-                border: "2px dashed #ccc",
-                borderRadius: 2,
-                p: 4,
-                textAlign: "center",
-              }}
-            >
-              <input
-                type="file"
-                accept="image/*,video/*"
-                hidden
-                multiple
-                id="image-upload"
-                onChange={handleFileSelect}
-              />
-              <label htmlFor="image-upload">
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  Click photo to tag people
-                </Typography>
-                <Button
-                  variant="outlined"
-                  component="span"
-                  sx={{ textTransform: "none" }}
-                >
-                  Select from computer
-                </Button>
-              </label>
-            </Box>
-          ) : (
-            <ImageList cols={2} gap={8} sx={{ p: 2 }}>
-              {previewUrls.map((preview, index) => (
-                <ImageListItem key={index} sx={{ position: "relative" }}>
-                  {preview.type.startsWith("video/") ? (
-                    <video
-                      src={preview.url}
-                      controls
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={preview.url}
-                      alt={`Preview ${index}`}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  )}
-                  <IconButton
-                    onClick={() => removeFile(index)}
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      bgcolor: "rgba(0, 0, 0, 0.5)",
-                      "&:hover": { bgcolor: "rgba(0, 0, 0, 0.7)" },
-                      color: "white",
-                    }}
-                  >
-                    <Delete />
-                  </IconButton>
-                </ImageListItem>
-              ))}
-              <ImageListItem>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: "flex-start",
+              gap: 2,
+              minHeight: 350,
+            }}
+          >
+            {previewUrls.length === 0 ? (
+              <Box
+                sx={{
+                  border: "2px dashed #ccc",
+                  borderRadius: 2,
+                  p: 4,
+                  textAlign: "center",
+                  flex: 1,
+                  minHeight: 350,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <input
                   type="file"
                   accept="image/*,video/*"
                   hidden
                   multiple
-                  id="add-more-media"
+                  id="image-upload"
                   onChange={handleFileSelect}
                 />
-                <label htmlFor="add-more-media">
-                  <Box
+                <label htmlFor="image-upload">
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    Click photo to tag people
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{ textTransform: "none" }}
+                  >
+                    Select from computer
+                  </Button>
+                </label>
+              </Box>
+            ) : (
+              <Box sx={{ flex: 1 }}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: 300,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#000",
+                  }}
+                >
+                  {previewUrls[currentIndex].type.startsWith("video/") ? (
+                    <video
+                      src={previewUrls[currentIndex].url}
+                      controls
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={previewUrls[currentIndex].url}
+                      alt={`Preview ${currentIndex}`}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  )}
+                  <IconButton
+                    onClick={handlePrev}
                     sx={{
-                      width: "100%",
-                      height: "100%",
-                      minHeight: 100,
-                      border: "2px dashed #666",
-                      borderRadius: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
+                      position: "absolute",
+                      left: 16,
                       color: "white",
+                      zIndex: 1,
                     }}
                   >
-                    <Add />
-                  </Box>
-                </label>
-              </ImageListItem>
-            </ImageList>
-          )}
-
-          <Box sx={{ mt: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-              <Avatar sx={{ width: 32, height: 32, mr: 1 }} />
-              <Typography variant="subtitle2">username</Typography>
-            </Box>
-
-            <TextField
-              multiline
-              rows={4}
-              fullWidth
-              placeholder="Write a caption..."
-              variant="standard"
-              onChange={(e) => setCaption(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-
-            {/* {[
-            { text: "Add location", icon: <LocationOn /> },
-            { text: "Add collaborators", icon: <People /> },
-            { text: "Accessibility", icon: <AccessibilityNew /> },
-            { text: "Advanced settings", icon: <Settings /> },
-          ].map((item, index) => (
-            <React.Fragment key={item.text}>
-              <Divider />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  py: 1.5,
-                }}
-              >
-                <Typography variant="body1">{item.text}</Typography>
-                <IconButton size="small">{item.icon}</IconButton>
+                    <ArrowBack />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleNext}
+                    sx={{
+                      position: "absolute",
+                      right: 16,
+                      color: "white",
+                      zIndex: 1,
+                    }}
+                  >
+                    <ArrowForward />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => removeFile(currentIndex)}
+                    sx={{
+                      position: "absolute",
+                      top: 16,
+                      right: 16,
+                      color: "white",
+                      zIndex: 1,
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: 2,
+                    gap: 1,
+                  }}
+                >
+                  {/* {previewUrls.map((preview, index) => (
+                    <img
+                      key={index}
+                      src={preview.url}
+                      alt={`Thumbnail ${index}`}
+                      onClick={() => setCurrentIndex(index)}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        objectFit: "cover",
+                        border:
+                          index === currentIndex ? "2px solid blue" : "none",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ))} */}
+                </Box>
+                <Box sx={{ textAlign: "center", mt: 2 }}>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    hidden
+                    id="add-more-images"
+                    onChange={handleFileSelect}
+                    multiple
+                  />
+                  <label htmlFor="add-more-images">
+                    <Button variant="outlined" component="span">
+                      Add More Images
+                    </Button>
+                  </label>
+                </Box>
               </Box>
-            </React.Fragment>
-          ))} */}
+            )}
+
+            <Box sx={{ flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Avatar sx={{ width: 32, height: 32, mr: 1 }} />
+                <Typography variant="subtitle2">username</Typography>
+              </Box>
+
+              <TextField
+                multiline
+                rows={4}
+                fullWidth
+                placeholder="Write a caption..."
+                variant="standard"
+                onChange={(e) => setCaption(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+            </Box>
           </Box>
         </CardContent>
       </Card>

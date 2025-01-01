@@ -10,7 +10,31 @@ export const postApi = api.injectEndpoints({
         formData: true,
       }),
     }),
+    getFeedPost: builder.query({
+      query: (params) => ({
+        url: `post/feed`,
+        method: "GET",
+        params,
+      }),
+    }),
+    likePost: builder.mutation({
+      query: (postId) => ({
+        url: `/post/${postId}/like`,
+        method: "POST",
+      }),
+    }),
+    unlikePost: builder.mutation({
+      query: (postId) => ({
+        url: `/post/${postId}/unlike`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
-export const { useCreatPostMutation } = postApi;
+export const {
+  useCreatPostMutation,
+  useLazyGetFeedPostQuery,
+  useLikePostMutation,
+  useUnlikePostMutation,
+} = postApi;

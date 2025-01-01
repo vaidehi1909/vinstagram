@@ -1,6 +1,6 @@
-import { parse } from "dotenv";
 import PostModel from "../models/post.js";
 import S3Service from "../utils/aws/s3.js";
+import LikeService from "./like.js";
 
 const createPost = async (postData, mediaFiles) => {
   return S3Service.uploadFiles(mediaFiles).then(async (res) => {
@@ -65,7 +65,30 @@ const getUserFeed = async (params) => {
   const sort = { createdAt: -1 };
   const populate = ["user", "fullName userName profileImage"];
   const pagination = buildPagination(params);
-  return getPosts({ filters, fields, sort, populate, pagination });
+  return getPosts({ filters, fields, sort, populate, pagination }).then(
+    async (posts) => {
+      return await updateUserLikedPosts(posts, userId);
+    }
+  );
+};
+
+const updateUserLikedPosts = async (posts, userId) => {
+  const postIds = posts.map((post) => post._id);
+  const userLikedPosts = await LikeService.getUserLikePosts(
+    userId,
+    postIds
+  ).then((data) => {
+    return data.reduce((acc, likedPost) => {
+      acc[likedPost.post] = true;
+      return acc;
+    }, {});
+  });
+  posts = posts.map((post) => {
+    const newPost = post.toObject();
+    newPost.isLiked = userLikedPosts[post._id] || false;
+    return newPost;
+  });
+  return posts;
 };
 
 const getPostList = async (params) => {

@@ -2,7 +2,7 @@ import React from 'react'
 import Layout from "../../components/layout";
 import { Box, Grid } from "@mui/material";
 import StoryBar from "../../components/layout/StoryBar";
-import Feed from "../../components/layout/Feed";
+import FeedList from "../../components/Feed/List";
 import Suggestions from "../../components/layout/Suggestions";
 
 const FeedLayout = () => {
@@ -12,7 +12,7 @@ const FeedLayout = () => {
         <Grid item xs={12} md={8}>
           {/* Add StoryBar Above Feed */}
           <StoryBar />
-          <Feed />
+          <FeedList />
         </Grid>
         <Grid
           item
