@@ -13,9 +13,18 @@ let likeSchema = Schema(
 );
 
 // Create a compound unique index
-likeSchema.index({ post: 1, user: 1 }, { unique: true });
-likeSchema.index({ comment: 1, user: 1 }, { unique: true });
-likeSchema.index({ story: 1, user: 1 }, { unique: true });
+likeSchema.index(
+  { post: 1, user: 1 },
+  { unique: true, partialFilterExpression: { post: { $exists: true } } }
+);
+likeSchema.index(
+  { comment: 1, user: 1 },
+  { unique: true, partialFilterExpression: { comment: { $exists: true } } }
+);
+likeSchema.index(
+  { story: 1, user: 1 },
+  { unique: true, partialFilterExpression: { story: { $exists: true } } }
+);
 const LikeModel = mongoose.model("Like", likeSchema);
 
 export default LikeModel;

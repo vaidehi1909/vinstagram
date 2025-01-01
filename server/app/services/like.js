@@ -10,7 +10,8 @@ const likePost = async (post, user) => {
     .catch((error) => {
       if (error.code === 11000) {
         // Duplicate key
-        // const field = Object.keys(error.keyPattern)[0];
+        const field = Object.keys(error.keyPattern)[0];
+        console.log(field, error);
         throw new Error(`post already liked`);
       }
       throw error;
