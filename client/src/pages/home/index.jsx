@@ -1,5 +1,5 @@
 import React from 'react'
-import Layout from "../../components/layout";
+import Layout from "../../components/layout/index";
 import { Box, Grid } from "@mui/material";
 import StoryBar from "../../components/layout/StoryBar";
 import FeedList from "../../components/Feed/List";
