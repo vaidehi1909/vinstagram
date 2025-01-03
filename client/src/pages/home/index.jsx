@@ -1,9 +1,9 @@
 import React from 'react'
-import Layout from "../../components/layout/index";
+import Layout from "../../components/Layout/index";
 import { Box, Grid } from "@mui/material";
-import StoryBar from "../../components/layout/StoryBar";
+import StoryBar from "../../components/Layout/StoryBar";
 import FeedList from "../../components/Feed/List";
-import Suggestions from "../../components/layout/Suggestions";
+import Suggestions from "../../components/Layout/Suggestions";
 
 const FeedLayout = () => {
   return (
