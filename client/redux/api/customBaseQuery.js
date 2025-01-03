@@ -1,6 +1,6 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 ;
-export const Url = "http://localhost:4000";
+export const Url = import.meta.env.VITE_API_BASE_URL;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: Url,
