@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://vaidehi-modi.github.io/vinstagram",
+  "homepage": "https://vaidehi1909.github.io/vinstagram",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
