@@ -39,10 +39,11 @@ const buildPagination = (params) => {
 };
 
 const getUserPosts = async (params) => {
+  const { userId } = params;
   const filters = { user: userId };
   const fields = [
     "caption",
-    "media",
+    "mainThumbnail",
     "likesCount",
     "commentCount",
     "createdAt",

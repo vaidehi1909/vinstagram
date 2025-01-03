@@ -29,6 +29,12 @@ export const postApi = api.injectEndpoints({
         method: "POST",
       }),
     }),
+    getUserPosts: builder.query({
+      query: () => ({
+        url: "/post/me",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -37,4 +43,5 @@ export const {
   useLazyGetFeedPostQuery,
   useLikePostMutation,
   useUnlikePostMutation,
+  useGetUserPostsQuery,
 } = postApi;

@@ -19,6 +19,7 @@ import {
   useLikePostMutation,
   useUnlikePostMutation,
 } from "../../../redux/post/postApi";
+import CommentModal from "./CommentModal";
 
 // Custom styled component for heart animation
 const AnimatedHeart = styled(Box)`
@@ -78,6 +79,7 @@ const CarouselButton = styled(IconButton)`
 
 const FeedItem = ({ post }) => {
   const [likes, updateLikes] = useOptimistic(post.likesCount);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [showHeartAnimation, setShowHeartAnimation] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -264,7 +266,10 @@ const FeedItem = ({ post }) => {
               <FavoriteBorderIcon sx={{ fontSize: 24 }} />
             )}
           </IconButton>
-          <IconButton sx={{ padding: "8px", marginRight: "6px" }}>
+          <IconButton
+            sx={{ padding: "8px", marginRight: "6px" }}
+            onClick={() => setIsCommentModalOpen(true)}
+          >
             <ChatBubbleOutlineIcon sx={{ fontSize: 24 }} />
           </IconButton>
           <IconButton sx={{ padding: "8px" }}>
@@ -296,6 +301,13 @@ const FeedItem = ({ post }) => {
           )}
         </Box>
       </Card>
+      {isCommentModalOpen && (
+        <CommentModal
+          open={isCommentModalOpen} // Correct prop name
+          onClose={() => setIsCommentModalOpen(false)}
+          post={post}
+        />
+      )}
     </Grid>
   );
 };

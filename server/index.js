@@ -14,7 +14,7 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
+  origin: [CONSTANTS.FRONTEND_URL],
   optionsSuccessStatus: 200, // For legacy browser support,
   credentials: true, // for cookie
 };

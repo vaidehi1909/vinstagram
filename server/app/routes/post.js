@@ -12,6 +12,7 @@ const likeController = new LikeController();
 router.get("/list", authenction, postController.postList);
 router.get("/me", authenction, postController.userPosts);
 router.get("/feed", authenction, postController.userFeed);
+// router.get("/:userId", authenction, postController.getpostDetails);
 
 router.post("/create", authenction, multiUpload, postController.createPost);
 router.post("/:postId/like", authenction, likeController.likePost);
