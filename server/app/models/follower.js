@@ -14,7 +14,9 @@ let followerSchema = Schema(
   { timestamps: true }
 );
 
-followerSchema.index({ follower: 1, following: 1 });
+followerSchema.index({ follower: 1, following: 1 }, { unique: true });
+followerSchema.index({ follower: 1 });
+followerSchema.index({ following: 1 });
 const FollowerModel = mongoose.model("Follower", followerSchema);
 
 export default FollowerModel;

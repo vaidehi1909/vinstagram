@@ -25,7 +25,7 @@ const Suggestions = () => {
         console.log(res.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const loadingarray = Array.from({ length: 3 }, (_, index) => index);

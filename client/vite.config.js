@@ -4,7 +4,7 @@ import { resolve } from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/vinstagram/", // Must match your repo name for githib pages
+  base: "/vinstagram", // Must match your repo name for githib pages
   build: {
     outDir: "dist",
     rollupOptions: {

@@ -35,7 +35,6 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       const res = await login(values).unwrap();
-      console.log(res);
       if (res.status === 200) {
         navigate("/");
       }

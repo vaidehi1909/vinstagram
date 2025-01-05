@@ -25,7 +25,6 @@ const followerSlice = createSlice({
       .addMatcher(
         followerApi.endpoints.getSuggestions.matchFulfilled,
         (state, { payload }) => {
-          console.log(payload);
           state.loading = false;
           state.error = {};
           state.sugestion = payload?.payload;
@@ -48,7 +47,6 @@ const followerSlice = createSlice({
       .addMatcher(
         followerApi.endpoints.getRequestList.matchFulfilled,
         (state, { payload }) => {
-          console.log(payload);
           state.loading = false;
           state.error = {};
           state.requestList = payload?.payload;

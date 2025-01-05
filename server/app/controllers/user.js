@@ -24,7 +24,8 @@ class UserController {
   }
 
   async userDetails(req, res, next) {
-    return UserService.userDetails(req.user.id)
+    const id = req.params.id || req.user.id;
+    return UserService.userDetails(id)
       .then((data) => successResponse(res, "user details", data))
       .catch((error) => errorResponse(res, error));
   }
@@ -35,6 +36,12 @@ class UserController {
 
     return UserService.resetPassword(req.body)
       .then((data) => successResponse(res, "Password reset successfully", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
+  async userList(req, res, next) {
+    return UserService.userList(req.body)
+      .then((data) => successResponse(res, "user list", data))
       .catch((error) => errorResponse(res, error));
   }
 }

@@ -31,16 +31,10 @@ export const generateFakeUsers = (num) => {
 
 // Function to insert fake users into the database
 export const seedUsers = async (num) => {
-  try {
-    const users = generateFakeUsers(num);
-    console.log("Inserting user records...", users.length);
-    await User.insertMany(users);
-    console.log(`${num} user records inserted successfully`);
-    process.exit(0);
-  } catch (error) {
-    console.error("Error inserting user records:", error);
-    process.exit();
-  }
+  const users = generateFakeUsers(num);
+  console.log("Inserting user records...", users.length);
+  await User.insertMany(users);
+  console.log(`${num} user records inserted successfully`);
 };
 
 export const deleteUsers = async () => {

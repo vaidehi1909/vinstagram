@@ -1,4 +1,7 @@
+import FollowerModel from "../models/follower.js";
+import PostModel from "../models/post.js";
 import UserModel from "../models/user.js";
+import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
 import authService from "./auth.js";
 import bcrypt from "bcrypt";
 
@@ -40,10 +43,19 @@ const login = async (params) => {
 };
 
 const userDetails = async (userId) => {
-  const user = await UserModel.findById(userId).select("-password");
+  let user = await UserModel.findById(userId).select("-password");
   if (!user) {
     throw new Error("User not found");
   }
+  const [followers, following, post] = await Promise.all([
+    FollowerModel.find({ following: userId }).countDocuments(),
+    FollowerModel.find({ follower: userId }).countDocuments(),
+    PostModel.find({ user: userId }).countDocuments(),
+  ]);
+  user = user.toObject();
+  user.followersCount = followers;
+  user.followingCount = following;
+  user.postCount = post;
   return user;
 };
 
@@ -68,12 +80,31 @@ const resetPassword = async (params) => {
   });
 };
 
+const getRecords = (params) => {
+  const queryBuilder = new BaseQueryBuilder(UserModel, params);
+  return queryBuilder.build();
+};
+
+const userList = async (params) => {
+  const { search } = params;
+  const filters = {};
+  if (search) {
+    filters.$or = [
+      { fullName: { $regex: search, $options: "i" } },
+      { userName: { $regex: search, $options: "i" } },
+    ];
+  }
+  const fields = ["fullName", "userName", "profileImage"];
+  return getRecords({ ...params, filters, fields });
+};
+
 const UserService = {
   isUserExist,
   signup,
   login,
   userDetails,
   resetPassword,
+  userList,
 };
 
 export default UserService;

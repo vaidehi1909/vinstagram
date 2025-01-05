@@ -31,6 +31,15 @@ class FollowerController {
       .then((data) => successResponse(res, "follow requests", data))
       .catch((error) => errorResponse(res, error));
   }
+  async list(req, res, next) {
+    const userId = req.params.userid || req.user.id;
+    const type = req.query.type || "followers";
+    return FollowerService.list({ ...req.query, userId, type })
+      .then((data) => successResponse(res, "followers", data))
+      .catch((error) => errorResponse(res, error));
+  }
 }
+
+
 
 export default FollowerController;

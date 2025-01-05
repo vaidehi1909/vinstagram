@@ -9,7 +9,21 @@ export const userApi = api.injectEndpoints({
         body,
       }),
     }),
+    search: builder.mutation({
+      query: (body) => ({
+        url: "/user/search",
+        method: "POST",
+        body,
+      }),
+    }),
+    getUserDetails: builder.query({
+      query: (userId) => ({
+        url: `/user/${userId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useSignupMutation } = userApi;
+export const { useSignupMutation, useSearchMutation, useGetUserDetailsQuery } =
+  userApi;

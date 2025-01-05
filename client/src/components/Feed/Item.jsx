@@ -19,7 +19,7 @@ import {
   useLikePostMutation,
   useUnlikePostMutation,
 } from "../../../redux/post/postApi";
-import CommentModal from "./CommentModal";
+import CommentModal from "../Comment/Modal";
 
 // Custom styled component for heart animation
 const AnimatedHeart = styled(Box)`

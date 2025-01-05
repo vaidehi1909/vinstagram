@@ -29,9 +29,27 @@ export const postApi = api.injectEndpoints({
         method: "POST",
       }),
     }),
-    getUserPosts: builder.query({
+    getMyPosts: builder.query({
       query: () => ({
-        url: "/post/me",
+        url: "/post/user/me",
+        method: "GET",
+      }),
+    }),
+    getUserPosts: builder.query({
+      query: (userId) => ({
+        url: `/post/user/${userId}`,
+        method: "GET",
+      }),
+    }),
+    getPostDetails: builder.query({
+      query: (postId) => ({
+        url: `/post/${postId}`,
+        method: "GET",
+      }),
+    }),
+    getPostComments: builder.query({
+      query: (postId) => ({
+        url: `/post/${postId}/comments`,
         method: "GET",
       }),
     }),
@@ -44,4 +62,7 @@ export const {
   useLikePostMutation,
   useUnlikePostMutation,
   useGetUserPostsQuery,
+  useGetMyPostsQuery,
+  useGetPostDetailsQuery,
+  useGetPostCommentsQuery,
 } = postApi;

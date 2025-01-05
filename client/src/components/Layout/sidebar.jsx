@@ -26,6 +26,7 @@ import {
 import { styled } from "@mui/material/styles";
 import NotificationDrawer from "../Notification/Drawer";
 import CreatePostModal from "../Post/Modal";
+import SearchDrawer from "../Search/SearchDrawer";
 
 // Styled components
 const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
@@ -39,10 +40,16 @@ const Sidebar = ({ isBottomNav }) => {
   const navigate = useNavigate();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const menuItems = [
     { icon: <Home />, label: "Home", path: "/", mobilepath: "/" },
-    { icon: <Search />, label: "Search" },
+    {
+      icon: <Search />,
+      label: "Search",
+      action: "show_search",
+      mobilepath: "/search",
+    },
     { icon: <Explore />, label: "Explore" },
     { icon: <Message />, label: "Messages" },
     {
@@ -65,6 +72,8 @@ const Sidebar = ({ isBottomNav }) => {
       setIsNotificationOpen(true); // Open notifications panel
     } else if (item.action === "create_post") {
       setIsCreatePostOpen(true); // Open create post modal
+    } else if (item.action === "show_search") {
+      setIsSearchOpen(true); // Open create search modal
     } else if (item.path) {
       navigate(item.path);
     }
@@ -120,7 +129,7 @@ const Sidebar = ({ isBottomNav }) => {
             {menuItems.map((item, index) => (
               <ListItem
                 key={index}
-                button
+                //button
                 onClick={() => handleMenuItemClick(item)}
                 sx={{ borderRadius: 1, mb: 2, color: "black" }}
               >
@@ -156,6 +165,13 @@ const Sidebar = ({ isBottomNav }) => {
         <CreatePostModal
           open={isCreatePostOpen}
           onClose={() => setIsCreatePostOpen(false)}
+        />
+      )}
+
+      {isSearchOpen && (
+        <SearchDrawer
+          open={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
         />
       )}
     </>

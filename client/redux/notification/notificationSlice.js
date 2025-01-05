@@ -24,7 +24,6 @@ const notificationSlice = createSlice({
       .addMatcher(
         notificationApi.endpoints.getNotification.matchFulfilled,
         (state, { payload }) => {
-          console.log(payload);
           state.loading = false;
           state.error = {};
           state.notification = payload?.payload;

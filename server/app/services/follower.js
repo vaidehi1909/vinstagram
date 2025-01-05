@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import FollowerModel from "../models/follower.js";
 import NotificationModel from "../models/notification.js";
 import UserModel from "../models/user.js";
-import { request } from "express";
+import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
 
 const followRequest = async (userId, followingId) => {
   const query = { follower: userId, following: followingId };
@@ -89,12 +89,30 @@ const requestList = async (userId) => {
   );
 };
 
+const getRecords = (params) => {
+  const queryBuilder = new BaseQueryBuilder(FollowerModel, params);
+  return queryBuilder.build();
+};
+
+const list = async (params) => {
+  const { userId, type } = params;
+  const filters =
+    type === "followers" ? { following: userId } : { follower: userId };
+  const populateField = type === "followers" ? "follower" : "following";
+  const populate = [populateField, "fullName userName profileImage"];
+  const fields =
+    type === "followers" ? ["follower status"] : ["following status"];
+  const sort = { createdAt: -1 }; // sort by latest
+  return getRecords({ ...params, filters, populate, fields, sort });
+};
+
 const FollowerService = {
   followRequest,
   accept,
   reject,
   suggestions,
   requestList,
+  list,
 };
 
 export default FollowerService;

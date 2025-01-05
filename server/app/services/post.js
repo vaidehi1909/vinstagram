@@ -1,6 +1,7 @@
 import PostModel from "../models/post.js";
 import S3Service from "../utils/aws/s3.js";
 import LikeService from "./like.js";
+import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
 
 const createPost = async (postData, mediaFiles) => {
   return S3Service.uploadFiles(mediaFiles).then(async (res) => {
@@ -21,21 +22,12 @@ const createPost = async (postData, mediaFiles) => {
 };
 
 const getPosts = async (params = {}) => {
-  const { filters = {}, fields = [], sort, populate, pagination } = params;
-  let query = PostModel.find(filters);
-  if (fields.length) query = query.select(fields.join(" "));
-  if (sort) query = query.sort(params.sort);
-  if (populate?.length) query = query.populate(...populate);
-  if (pagination)
-    query = query.skip(pagination.skip || 0).limit(pagination.limit);
-  return query;
+  const queryBuilder = new BaseQueryBuilder(PostModel, params);
+  return queryBuilder.build();
 };
 
-const buildPagination = (params) => {
-  let { limit, page } = params;
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
-  return { skip: (page - 1) * limit, limit };
+const getMyPosts = async (params) => {
+  return getUserPosts(params);
 };
 
 const getUserPosts = async (params) => {
@@ -48,8 +40,7 @@ const getUserPosts = async (params) => {
     "commentCount",
     "createdAt",
   ];
-  const pagination = buildPagination(params);
-  return getPosts({ filters, fields, pagination });
+  return getPosts({ ...params, filters, fields });
 };
 
 const getUserFeed = async (params) => {
@@ -65,12 +56,21 @@ const getUserFeed = async (params) => {
   ];
   const sort = { createdAt: -1 };
   const populate = ["user", "fullName userName profileImage"];
-  const pagination = buildPagination(params);
-  return getPosts({ filters, fields, sort, populate, pagination }).then(
+  return getPosts({ ...params, filters, fields, sort, populate }).then(
     async (posts) => {
       return await updateUserLikedPosts(posts, userId);
     }
   );
+};
+
+const getPostDetails = async (postId, fields = []) => {
+  return PostModel.findById(postId)
+    .populate("user", "fullName userName profileImage")
+    .select(fields.join(" "))
+    .then(async (post) => {
+      if (!post) throw new Error("Post not found");
+      return post;
+    });
 };
 
 const updateUserLikedPosts = async (posts, userId) => {
@@ -96,8 +96,7 @@ const getPostList = async (params) => {
   const { userId } = params;
   const filters = { user: { $ne: userId } };
   const fields = ["user", "caption", "mainThumbnail"];
-  const pagination = buildPagination(params);
-  return getPosts({ filters, fields, pagination });
+  return getPosts({ ...params, filters, fields });
 };
 
 const deletePost = async (postId) => {
@@ -107,10 +106,12 @@ const deletePost = async (postId) => {
 const PostService = {
   createPost,
   getPosts,
+  getMyPosts,
   deletePost,
   getUserPosts,
   getUserFeed,
   getPostList,
+  getPostDetails,
 };
 
 export default PostService;
