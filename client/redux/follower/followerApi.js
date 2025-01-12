@@ -11,7 +11,7 @@ export const followerApi = api.injectEndpoints({
       providesTags: ["Follower"],
     }),
     followRequest: builder.mutation({
-      query: ({ followingId }) => ({
+      query: (followingId) => ({
         url: `/follower/${followingId}/request`,
         method: "POST",
       }),
@@ -32,11 +32,30 @@ export const followerApi = api.injectEndpoints({
       invalidatesTags: ["request"],
     }),
     reject: builder.mutation({
-      query: ({ followerId }) => ({
+      query: (followerId) => ({
         url: `/follower/${followerId}/reject`,
         method: "POST",
       }),
-      invalidatesTags: ["request"],
+      invalidatesTags: [
+        "request",
+        "FollowerList",
+        "UserDetails",
+        "UserProfile",
+      ],
+    }),
+    list: builder.query({
+      query: ({ userId, type }) => {
+        let url = "/follower/list";
+        if (userId) {
+          url += `/${userId}`;
+        }
+        return {
+          url,
+          method: "GET",
+          params: { type },
+        };
+      },
+      providesTags: ["FollowerList"],
     }),
   }),
 });
@@ -47,4 +66,5 @@ export const {
   useGetRequestListQuery,
   useAcceptMutation,
   useRejectMutation,
+  useListQuery,
 } = followerApi;

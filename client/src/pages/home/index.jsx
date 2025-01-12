@@ -3,7 +3,7 @@ import Layout from "../../components/Layout/index";
 import { Box, Grid } from "@mui/material";
 import StoryBar from "../../components/Layout/StoryBar";
 import FeedList from "../../components/Feed/List";
-import Suggestions from "../../components/Layout/Suggestions";
+import SuggestionsList from "../../components/Follower/SuggestionList";
 
 const FeedLayout = () => {
   return (
@@ -24,7 +24,7 @@ const FeedLayout = () => {
             // borderLeft: "1px solid #ddd",
           }}
         >
-          <Suggestions />
+          <SuggestionsList />
         </Grid>
       </Grid>
     </Box>

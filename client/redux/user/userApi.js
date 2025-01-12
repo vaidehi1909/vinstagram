@@ -21,6 +21,7 @@ export const userApi = api.injectEndpoints({
         url: `/user/${userId}`,
         method: "GET",
       }),
+      providesTags: ["UserDetails"],
     }),
   }),
 });

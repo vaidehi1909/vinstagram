@@ -69,7 +69,9 @@ const getPostDetails = async (postId, fields = []) => {
     .select(fields.join(" "))
     .then(async (post) => {
       if (!post) throw new Error("Post not found");
-      return post;
+      return await updateUserLikedPosts([post], post.user._id).then(
+        (posts) => posts?.[0]
+      );
     });
 };
 
@@ -96,7 +98,7 @@ const getPostList = async (params) => {
   const { userId } = params;
   const filters = { user: { $ne: userId } };
   const fields = ["user", "caption", "mainThumbnail"];
-  return getPosts({ ...params, filters, fields });
+  return getPosts({ ...params, filters, fields }).then;
 };
 
 const deletePost = async (postId) => {

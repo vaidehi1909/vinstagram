@@ -1,6 +1,7 @@
 import CommentModel from "../models/comment.js";
 import LikeModel from "../models/like.js";
 import PostModel from "../models/post.js";
+import { validateDuplicate } from "../utils/responseHelper.js";
 
 const likePost = async (post, user) => {
   await validatePost(post);
@@ -9,10 +10,7 @@ const likePost = async (post, user) => {
       await PostModel.updateOne({ _id: post }, { $inc: { likesCount: 1 } });
     })
     .catch((error) => {
-      if (error.code === 11000) {
-        // Duplicate key
-        const field = Object.keys(error.keyPattern)[0];
-        console.log(field, error);
+      if (validateDuplicate(error)) {
         throw new Error(`post already liked`);
       }
       throw error;
@@ -37,11 +35,8 @@ const likeComment = async (comment, user) => {
       );
     })
     .catch((error) => {
-      if (error.code === 11000) {
-        // Duplicate key
-        const field = Object.keys(error.keyPattern)[0];
-        console.log(field, error);
-        throw new Error(`post already liked`);
+      if (validateDuplicate(error)) {
+        throw new Error(`comment already liked`);
       }
       throw error;
     });
@@ -73,8 +68,14 @@ const validateComment = async (comment) => {
 };
 
 const getUserLikePosts = async (user, postIds = null) => {
-  const filters = { user, type: "post" };
+  const filters = { user };
   if (postIds) filters.post = { $in: postIds };
+  return LikeModel.find(filters);
+};
+
+const getUserLikeComments = async (user, commentIds = null) => {
+  const filters = { user };
+  if (commentIds) filters.comment = { $in: commentIds };
   return LikeModel.find(filters);
 };
 
@@ -84,5 +85,6 @@ const LikeService = {
   likeComment,
   unlikeComment,
   getUserLikePosts,
+  getUserLikeComments,
 };
 export default LikeService;

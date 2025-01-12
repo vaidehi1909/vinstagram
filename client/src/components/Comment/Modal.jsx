@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,17 +6,17 @@ import {
   IconButton,
   Typography,
   Avatar,
-  TextField,
   styled,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import SendIcon from "@mui/icons-material/Send";
-import { useGetPostDetailsQuery } from "../../../redux/post/postApi";
-import CommentList from "./List";
+import {
+  useGetPostDetailsQuery,
+  useGetPostCommentsQuery,
+} from "../../../redux/post/postApi";
+import PostDetails from "../Post/PostDetails";
+import CommentLayout from "./Layout";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
@@ -29,23 +29,12 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const CommentModal = ({ open, onClose, post }) => {
-  const [newComment, setNewComment] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { data, isLoading, isFetching, isError } = useGetPostDetailsQuery(
+  const { data: postData } = useGetPostDetailsQuery(post._id);
+  const { data: commentsData, ...commentsQuery } = useGetPostCommentsQuery(
     post._id
   );
-
-  if (isLoading || isFetching) {
-    return <h1>Loading...</h1>;
-  }
-
-  const postDetails = { ...post, ...data?.payload };
-
-  const handleSubmitComment = (e) => {
-    e.preventDefault();
-    setNewComment("");
-  };
 
   return (
     <StyledDialog
@@ -64,21 +53,7 @@ const CommentModal = ({ open, onClose, post }) => {
           }}
         >
           {/* Left side - Image */}
-          <Box
-            sx={{
-              width: isMobile ? "100%" : "60%",
-              height: isMobile ? "50%" : "100%",
-              bgcolor: "black",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src={postDetails?.media?.[0]?.url}
-              alt={postDetails?.caption}
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            />
-          </Box>
+          <PostDetails post={postData?.payload} isMobile={isMobile} />
 
           {/* Right side */}
           <Box
@@ -98,50 +73,25 @@ const CommentModal = ({ open, onClose, post }) => {
                 borderColor: "divider",
               }}
             >
-              <Avatar src={postDetails?.user?.profileImage} />
+              <Avatar src={postData?.payload?.user?.profileImage} />
               <Typography variant="subtitle2" sx={{ ml: 1, fontWeight: 600 }}>
-                {postDetails?.user?.userName}
+                {postData?.payload?.user?.userName}
               </Typography>
               <IconButton onClick={onClose} sx={{ ml: "auto" }}>
                 <CloseIcon />
               </IconButton>
             </Box>
 
-            <CommentList postId={postDetails._id} />
-
-            <Box sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
-              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
-                <IconButton size="small">
-                  <FavoriteBorderIcon />
-                </IconButton>
-                <IconButton size="small">
-                  <ChatBubbleOutlineIcon />
-                </IconButton>
-                <IconButton size="small">
-                  <SendIcon />
-                </IconButton>
-              </Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                {postDetails?.likesCount || 0} likes
-              </Typography>
-            </Box>
-
-            <Box
-              component="form"
-              onSubmit={handleSubmitComment}
-              sx={{ p: 2, borderTop: 1, borderColor: "divider" }}
-            >
-              <TextField
-                fullWidth
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Add a comment..."
-                variant="standard"
-                sx={{
-                  "& .MuiInput-underline:before": { borderBottom: "none" },
-                }}
+            {/* Comments */}
+            {commentsQuery.isLoading ? (
+              <Typography>Loading comments...</Typography>
+            ) : (
+              <CommentLayout
+                post={post}
+                comments={commentsData?.payload}
+                refetch={commentsQuery.refetch}
               />
-            </Box>
+            )}
           </Box>
         </Box>
       </DialogContent>

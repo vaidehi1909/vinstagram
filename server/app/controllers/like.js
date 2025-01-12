@@ -1,4 +1,4 @@
-import { errorResponse, successResponse } from "../utils/responeshelper.js";
+import { errorResponse, successResponse } from "../utils/responseHelper.js";
 import validationService from "../utils/validationService.js";
 import LikeService from "../services/like.js";
 

@@ -1,8 +1,37 @@
 import React from "react";
 import { Box, IconButton, Typography, Avatar } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useOptimistic } from "../../hooks/useOptimistic";
+import {
+  useLikeCommentMutation,
+  useUnlikeCommentMutation,
+} from "../../../redux/comment/commentApi";
 
 const CommentItem = ({ comment }) => {
+  const [isliked, setIsLiked] = useOptimistic(!!comment?.isLiked);
+  const [likesCount, setLikesCount] = useOptimistic(comment?.likesCount || 0);
+  const [likeComment] = useLikeCommentMutation();
+  const [unlikeComment] = useUnlikeCommentMutation();
+  const onCommentLikeToggle = () => {
+    setIsLiked(
+      (prev) => !prev,
+      async () => {
+        if (isliked) {
+          await unlikeComment(comment._id)
+            .unwrap()
+            .then(() => {
+              setLikesCount((prev) => prev - 1);
+            });
+        } else {
+          await likeComment(comment._id)
+            .unwrap()
+            .then(() => {
+              setLikesCount((prev) => prev + 1);
+            });
+        }
+      }
+    );
+  };
   return (
     <Box
       sx={{
@@ -24,7 +53,7 @@ const CommentItem = ({ comment }) => {
           }}
         >
           {comment.user.userName}{" "}
-          <span style={{ fontWeight: 400 }}>{comment.text}</span>
+          <span style={{ fontWeight: 400 }}>{comment.content}</span>
         </Typography>
 
         <Box
@@ -36,23 +65,27 @@ const CommentItem = ({ comment }) => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography
+            {/* <Typography
               variant="caption"
               sx={{ color: "text.secondary", fontSize: "0.75rem" }}
             >
               {comment.hours}
-            </Typography>
+            </Typography> */}
             <Typography
               variant="caption"
               sx={{ color: "text.secondary", fontSize: "0.75rem" }}
             >
-              {comment.likes} likes
+              {likesCount} likes
             </Typography>
           </Box>
         </Box>
       </Box>
-      <IconButton size="small" sx={{ p: 2 }}>
-        <FavoriteBorderIcon fontSize="small" />
+      <IconButton size="small" sx={{ p: 2 }} onClick={onCommentLikeToggle}>
+        {isliked ? (
+          <FavoriteBorderIcon color="secondary" fontSize="small" />
+        ) : (
+          <FavoriteBorderIcon fontSize="small" />
+        )}
       </IconButton>
     </Box>
   );

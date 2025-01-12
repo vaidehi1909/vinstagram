@@ -1,5 +1,5 @@
 import FollowerService from "../services/follower.js";
-import { errorResponse, successResponse } from "../utils/responeshelper.js";
+import { errorResponse, successResponse } from "../utils/responseHelper.js";
 
 class FollowerController {
   async followRequest(req, res, next) {

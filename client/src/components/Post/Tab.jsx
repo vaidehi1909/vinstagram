@@ -10,9 +10,9 @@ import {
   Tab,
 } from "@mui/material";
 import { useGetUserPostsQuery } from "../../../redux/post/postApi";
-import PostItem from "../Post/PostItem";
+import PostItem from "./Item";
 
-const PostTab = ({ userId }) => {
+const PostTab = ({ userId, isMobile }) => {
   const { data: posts, isLoading, isFetching } = useGetUserPostsQuery(userId);
 
   if (isLoading || isFetching) {

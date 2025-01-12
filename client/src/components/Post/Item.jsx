@@ -2,7 +2,7 @@ import { Box, Card, CardMedia, Grid } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import React from "react";
-import CommentModal from "../Comment/Modal";
+import PostCommentModal from "../Comment/Modal";
 
 const PostItem = ({ post }) => {
   const [isCommentModalOpen, setIsCommentModalOpen] = React.useState(false);
@@ -60,7 +60,7 @@ const PostItem = ({ post }) => {
         </Card>
       </Grid>
       {isCommentModalOpen && (
-        <CommentModal
+        <PostCommentModal
           open={isCommentModalOpen} // Correct prop name
           onClose={() => setIsCommentModalOpen(false)}
           post={post}

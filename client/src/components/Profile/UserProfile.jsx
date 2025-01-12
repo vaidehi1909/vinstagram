@@ -1,11 +1,19 @@
 import React from "react";
-import { Box, Typography, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useGetUserDetailsQuery } from "../../../redux/user/userApi";
-import PostTab from "./PostTab";
+import PostTab from "../Post/Tab";
 import UserDetails from "./UserDetails";
 
 const UserProfile = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { userId } = useParams(); // Extract the 'id' parameter from the URL
   const { data: user, isLoading, isFetching } = useGetUserDetailsQuery(userId);
 
@@ -25,12 +33,12 @@ const UserProfile = () => {
       }}
     >
       {/* Header Section */}
-      <UserDetails user={user?.payload} />
+      <UserDetails user={user?.payload} isMobile={isMobile} />
 
       <Divider />
 
       {/* Tabs Section */}
-      <PostTab userId={userId} />
+      <PostTab userId={userId} isMobile={isMobile} />
     </Box>
   );
 };

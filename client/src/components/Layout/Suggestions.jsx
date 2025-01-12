@@ -13,20 +13,27 @@ import {
   useFollowRequestMutation,
   useGetSuggestionsQuery,
 } from "../../../redux/follower/followerApi";
+import { useNavigate } from "react-router-dom";
 
 const Suggestions = () => {
   const { data, isLoading, isError, error } = useGetSuggestionsQuery();
   const [sendFollowRequest] = useFollowRequestMutation();
+  const navigate = useNavigate();
 
   const sendFollowRequestHandler = async (followingId) => {
     try {
-      const res = await sendFollowRequest({ followingId }).unwrap();
+      const res = await sendFollowRequest(followingId).unwrap();
       if (res.status === 200) {
         console.log(res.message);
       }
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const onItemClicked = (suggestion) => {
+    console.log("clicked", suggestion);
+    navigate(`/profile/${suggestion._id}`);
   };
   const loadingarray = Array.from({ length: 3 }, (_, index) => index);
   if (isLoading)
@@ -58,6 +65,7 @@ const Suggestions = () => {
       {data.payload.map((suggestion) => (
         <ListItem
           key={suggestion._id}
+          sx={{ cursor: "pointer" }}
           secondaryAction={
             <Button
               variant="outlined"
@@ -68,12 +76,13 @@ const Suggestions = () => {
             </Button>
           }
         >
-          <ListItemAvatar>
+          <ListItemAvatar onClick={() => onItemClicked(suggestion)}>
             <Avatar src={suggestion.profileImage} />
           </ListItemAvatar>
           <ListItemText
             primary={suggestion.userName}
             secondary="Instagram recommended"
+            onClick={() => onItemClicked(suggestion)}
           />
         </ListItem>
       ))}

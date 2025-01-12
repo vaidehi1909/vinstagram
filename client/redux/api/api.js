@@ -5,5 +5,12 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery,
   endpoints: (builder) => ({}),
-  tagTypes: ["Follower", "request"],
+  tagTypes: [
+    "Follower",
+    "request",
+    "PostComments",
+    "FollowerList",
+    "UserDetails",
+    "UserProfile",
+  ],
 });

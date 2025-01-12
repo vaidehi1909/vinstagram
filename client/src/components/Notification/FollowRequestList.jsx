@@ -22,7 +22,7 @@ const FollowRequestItem = ({ user }) => {
   const [requestAccept] = useAcceptMutation();
 
   const handleReject = () => {
-    requestReject({ followerId: user?.follower?._id });
+    requestReject(user?.follower?._id);
   };
   const handleAccept = () => {
     requestAccept({ followerId: user?.follower?._id });

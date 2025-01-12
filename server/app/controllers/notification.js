@@ -1,5 +1,5 @@
 import NotificationService from "../services/notification.js";
-import { errorResponse, successResponse } from "../utils/responeshelper.js";
+import { errorResponse, successResponse } from "../utils/responseHelper.js";
 
 class NotificationController {
   async notificationList(req, res, next) {

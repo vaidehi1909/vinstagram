@@ -4,6 +4,7 @@ import authSlice from "./auth/authSlice";
 import followerSlice from "./follower/followerSlice";
 import notificationSlice from "./notification/notificationSlice";
 import recentSearchSlice from "./user/recentSearchSlice";
+import toastSlice from "./toast/toastSlice";
 
 const reducer = combineReducers({
   [api.reducerPath]: api.reducer,
@@ -11,6 +12,7 @@ const reducer = combineReducers({
   follower: followerSlice,
   notification: notificationSlice,
   recentSearch: recentSearchSlice,
+  toast: toastSlice,
 });
 
 export const store = configureStore({

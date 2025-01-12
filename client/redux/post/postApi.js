@@ -52,6 +52,7 @@ export const postApi = api.injectEndpoints({
         url: `/post/${postId}/comments`,
         method: "GET",
       }),
+      providesTags: ["PostComments"],
     }),
   }),
 });

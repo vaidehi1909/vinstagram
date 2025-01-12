@@ -1,5 +1,5 @@
 import PostService from "../services/post.js";
-import { errorResponse, successResponse } from "../utils/responeshelper.js";
+import { errorResponse, successResponse } from "../utils/responseHelper.js";
 import validationService from "../utils/validationService.js";
 import LikeService from "../services/like.js";
 import CommentService from "../services/comment.js";
@@ -47,7 +47,8 @@ class PostController {
 
   async postComments(req, res, next) {
     const { postId } = req.params;
-    return CommentService.getPostComments({ ...req.query, postId })
+    const userId = req.user.id;
+    return CommentService.getPostComments({ ...req.query, postId, userId })
       .then((data) => successResponse(res, "post comments", data))
       .catch((error) => errorResponse(res, error));
   }

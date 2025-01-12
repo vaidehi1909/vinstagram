@@ -3,28 +3,34 @@ import FollowerModel from "../models/follower.js";
 import NotificationModel from "../models/notification.js";
 import UserModel from "../models/user.js";
 import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
+import { validateDuplicate } from "../utils/responseHelper.js";
 
 const followRequest = async (userId, followingId) => {
   const query = { follower: userId, following: followingId };
-  return FollowerModel.findOneAndUpdate(
-    query,
-    {
-      follower: userId,
-      following: followingId,
-      status: "requested",
-    },
-    {
-      new: true,
-      upsert: true,
-    }
-  ).then(async (doc) => {
-    await NotificationModel.create({
-      request: doc._id,
-      user: followingId,
-      actor: userId,
-      type: "request",
-    });
+  FollowerModel.create({
+    follower: userId,
+    following: followingId,
+    status: "requested",
   });
+  return FollowerModel.create({
+    follower: userId,
+    following: followingId,
+    status: "requested",
+  })
+    .then(async (doc) => {
+      await NotificationModel.create({
+        request: doc._id,
+        user: followingId,
+        actor: userId,
+        type: "request",
+      });
+    })
+    .catch((error) => {
+      if (validateDuplicate(error)) {
+        throw new Error(`You have already sent a request to this user`);
+      }
+      throw error; // throw error if not duplicate key error
+    });
 };
 
 const accept = async (userId, followerId) => {
@@ -50,11 +56,11 @@ const reject = async (userId, followerId) => {
 
 const suggestions = async (userId) => {
   // get all followers id
-  const followers = await FollowerModel.find({ follower: userId })
+  const followings = await FollowerModel.find({ follower: userId })
     .select("following")
     .then((followers) => followers.map((follower) => follower.following));
   const user = await UserModel.find({
-    _id: { $nin: [...followers, userId] },
+    _id: { $nin: [...followings, userId] },
   })
     .select("_id fullName userName profileImage")
     .limit(10);
@@ -95,15 +101,28 @@ const getRecords = (params) => {
 };
 
 const list = async (params) => {
-  const { userId, type } = params;
+  const { userId, type, status = "accepted", search } = params;
   const filters =
     type === "followers" ? { following: userId } : { follower: userId };
+  if (status) filters.status = status;
+  // if (search) filters.$or = [{ follower: search }, { following: search }];
   const populateField = type === "followers" ? "follower" : "following";
   const populate = [populateField, "fullName userName profileImage"];
   const fields =
     type === "followers" ? ["follower status"] : ["following status"];
   const sort = { createdAt: -1 }; // sort by latest
-  return getRecords({ ...params, filters, populate, fields, sort });
+  return getRecords({ ...params, filters, populate, fields, sort }).then(
+    async (records) => {
+      if (type === "followers") {
+        return records.map((record) => {
+          return { ...record.toObject()?.follower, status: record.status };
+        });
+      }
+      return records.map((record) => {
+        return { ...record.toObject()?.following, status: record.status };
+      });
+    }
+  );
 };
 
 const FollowerService = {

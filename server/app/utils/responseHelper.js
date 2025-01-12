@@ -16,4 +16,14 @@ const errorResponse = (res, error, statusCode = null) => {
   });
 };
 
-export { successResponse, errorResponse };
+const validateDuplicate = (error) => {
+  if (error.code === 11000) {
+    // Duplicate key
+    const field = Object.keys(error.keyPattern)[0];
+    console.log(field, error);
+    return true;
+  }
+  return false;
+};
+
+export { successResponse, errorResponse, validateDuplicate };

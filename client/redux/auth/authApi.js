@@ -14,6 +14,7 @@ export const authApi = api.injectEndpoints({
         url: "/user/me",
         method: "GET",
       }),
+      providesTags: ["UserProfile"],
     }),
   }),
 });

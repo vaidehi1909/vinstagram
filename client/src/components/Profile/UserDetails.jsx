@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { Box, Typography, Avatar } from "@mui/material";
-import FollowModal from "./FollowModal";
+import { Box, Typography, Avatar, Button } from "@mui/material";
+import FollowModal from "../Follower/Modal";
+import { useFollowRequestMutation } from "../../../redux/follower/followerApi";
+import { useDispatch } from "react-redux";
+import { addToast } from "../../../redux/toast/toastSlice";
 
-const UserDetails = ({ user }) => {
+const UserDetails = ({ user, isMobile }) => {
   const [followModalOpen, setFollowModalOpen] = useState(false);
   const [followModalType, setFollowModalType] = useState(""); // "followers" or "following"
+
+  const dispatch = useDispatch();
+  const [sendFollowRequest] = useFollowRequestMutation();
 
   const handleOpenModal = (type) => {
     setFollowModalType(type);
@@ -14,6 +20,26 @@ const UserDetails = ({ user }) => {
   const handleCloseModal = () => {
     setFollowModalOpen(false);
     setFollowModalType("");
+  };
+
+  const onUserFollow = () => {
+    sendFollowRequest(user._id)
+      .unwrap()
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(
+            addToast({
+              message: "Follow request sent successfully",
+              severity: "success",
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        const errorMsg = error?.data?.message || "Something went wrong";
+        dispatch(addToast({ message: errorMsg, severity: "error" }));
+      });
   };
   return (
     <Box
@@ -59,6 +85,35 @@ const UserDetails = ({ user }) => {
           >
             {user.userName}
           </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: { xs: "column", sm: "row" },
+              width: { xs: "100%", sm: "auto" },
+            }}
+          >
+            <Button
+              variant="outlined"
+              size={isMobile ? "small" : "medium"}
+              fullWidth={isMobile}
+              sx={{
+                borderRadius: "10px",
+                textTransform: "none",
+                backgroundColor: "#f5f5f5",
+                borderColor: "#dbdbdb",
+                color: "#262626",
+                "&:hover": {
+                  backgroundColor: "white",
+                  borderColor: "#dbdbdb",
+                },
+                minWidth: { xs: "100%", sm: "120px" },
+              }}
+              onClick={onUserFollow}
+            >
+              Follow
+            </Button>
+          </Box>
         </Box>
 
         {/* Followers and Posts Count */}
@@ -104,6 +159,7 @@ const UserDetails = ({ user }) => {
           open={followModalOpen}
           onClose={handleCloseModal}
           modalType={followModalType}
+          userId={user._id}
         />
       )}
     </Box>

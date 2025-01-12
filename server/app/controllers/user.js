@@ -1,5 +1,5 @@
 import UserService from "../services/user.js";
-import { errorResponse, successResponse } from "../utils/responeshelper.js";
+import { errorResponse, successResponse } from "../utils/responseHelper.js";
 import validationService from "../utils/validationService.js";
 
 class UserController {
@@ -40,7 +40,7 @@ class UserController {
   }
 
   async userList(req, res, next) {
-    return UserService.userList(req.body)
+    return UserService.userList({ ...req.body, userId: req.user.id })
       .then((data) => successResponse(res, "user list", data))
       .catch((error) => errorResponse(res, error));
   }

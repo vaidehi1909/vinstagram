@@ -48,8 +48,14 @@ const userDetails = async (userId) => {
     throw new Error("User not found");
   }
   const [followers, following, post] = await Promise.all([
-    FollowerModel.find({ following: userId }).countDocuments(),
-    FollowerModel.find({ follower: userId }).countDocuments(),
+    FollowerModel.find({
+      following: userId,
+      status: "accepted",
+    }).countDocuments(),
+    FollowerModel.find({
+      follower: userId,
+      status: "accepted",
+    }).countDocuments(),
     PostModel.find({ user: userId }).countDocuments(),
   ]);
   user = user.toObject();
@@ -86,8 +92,8 @@ const getRecords = (params) => {
 };
 
 const userList = async (params) => {
-  const { search } = params;
-  const filters = {};
+  const { search, userId } = params;
+  const filters = { _id: { $ne: userId } };
   if (search) {
     filters.$or = [
       { fullName: { $regex: search, $options: "i" } },
