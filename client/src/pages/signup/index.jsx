@@ -38,7 +38,6 @@ const signup = () => {
     }),
     onSubmit: async (values) => {
       const res = await signup(values).unwrap();
-      console.log(res);
     },
   });
 

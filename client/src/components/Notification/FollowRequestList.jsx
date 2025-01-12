@@ -167,7 +167,6 @@ const FollowRequestList = ({ onClose }) => {
   const { requestList: followRequests } = useSelector(
     (state) => state.follower
   );
-  console.log(followRequests);
 
   return (
     <Box sx={{ height: "100vh", bgcolor: "background.paper" }}>

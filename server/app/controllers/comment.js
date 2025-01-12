@@ -5,7 +5,6 @@ import CommentService from "../services/comment.js";
 
 class CommentController {
   async createComment(req, res, next) {
-    console.log("createComment", req.body);
     validationService.validateParams(req.body, ["postId", "content"]);
     return CommentService.createComment(req.body, req.user.id)
       .then((data) =>

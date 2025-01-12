@@ -34,7 +34,6 @@ const FollowersList = ({ userId, modalType }) => {
   const [unFollow] = useRejectMutation();
 
   const onUnFollow = useCallback((followingId) => {
-    console.log(followingId);
     unFollow(followingId)
       .unwrap()
       .catch((error) => {

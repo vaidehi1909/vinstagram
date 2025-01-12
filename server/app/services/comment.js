@@ -25,7 +25,6 @@ const updateUserLikedComments = async (comments, userId) => {
     userId,
     commentIds
   ).then((data) => {
-    console.log(data, "liked comments.....");
     return data.reduce((acc, likedComment) => {
       acc[likedComment.comment] = true;
       return acc;

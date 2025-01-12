@@ -37,7 +37,6 @@ const authSlice = createSlice({
       .addMatcher(
         authApi.endpoints.logIn.matchFulfilled,
         (state, { payload }) => {
-          console.log(payload);
           state.loading = false;
           state.error = {};
           state.token = payload?.payload;
@@ -59,7 +58,6 @@ const authSlice = createSlice({
       .addMatcher(
         authApi.endpoints.UserProfile.matchFulfilled,
         (state, { payload }) => {
-          console.log(payload);
           state.loading = false;
           state.error = {};
           state.user = payload?.payload;
