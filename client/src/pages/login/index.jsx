@@ -12,11 +12,12 @@ import * as Yup from "yup";
 import FormField from "../../components/common/FormField";
 import { useLogInMutation } from "../../../redux/auth/authApi";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { addToast } from "../../../redux/toast/toastSlice";
 const Login = () => {
-  const [login] = useLogInMutation();
+  const [login, result] = useLogInMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth?.token);
 
   useEffect(() => {
@@ -33,11 +34,19 @@ const Login = () => {
       emailId: Yup.string().required("email is required"),
       password: Yup.string().required("Password is required"),
     }),
-    onSubmit: async (values) => {
-      const res = await login(values).unwrap();
-      if (res.status === 200) {
-        navigate("/");
-      }
+    onSubmit: (values) => {
+      login(values)
+        .unwrap()
+        .then((res) => {
+          if (res.status === 200) {
+            navigate("/");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          const errorMsg = error?.data?.message || "Something went wrong";
+          dispatch(addToast({ message: errorMsg, severity: "error" }));
+        });
     },
   });
 
@@ -118,6 +127,7 @@ const Login = () => {
             fullWidth
             type="submit"
             variant="contained"
+            disabled={result.isLoading}
             sx={{
               borderRadius: 2,
               backgroundColor: "#0095f6",
