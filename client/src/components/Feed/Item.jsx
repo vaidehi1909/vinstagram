@@ -77,7 +77,7 @@ const CarouselButton = styled(IconButton)`
   }
 `;
 
-const FeedItem = ({ post }) => {
+const FeedItem = ({ item: post }) => {
   const [likes, updateLikes] = useOptimistic(post.likesCount);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
@@ -167,7 +167,7 @@ const FeedItem = ({ post }) => {
           >
             {post.media.map((media, index) => (
               <img
-                key={index}
+                key={`${post._id}-${index}`}
                 src={media.url}
                 alt={`${post.caption} ${index + 1}`}
                 style={{

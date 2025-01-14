@@ -13,7 +13,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import FollowersList from "./List";
 
-const FollowModal = ({ open, onClose, modalType = "following", userId }) => {
+const FollowModal = ({
+  open,
+  onClose,
+  modalType = "following",
+  userId,
+  isCurrentUser,
+}) => {
   const [search, setSearch] = useState("");
 
   return (
@@ -88,7 +94,11 @@ const FollowModal = ({ open, onClose, modalType = "following", userId }) => {
 
       {/* User List */}
       <DialogContent sx={{ p: 0, "&::-webkit-scrollbar": { display: "none" } }}>
-        <FollowersList userId={userId} modalType={modalType} />
+        <FollowersList
+          userId={userId}
+          modalType={modalType}
+          isCurrentUser={isCurrentUser}
+        />
       </DialogContent>
     </Dialog>
   );

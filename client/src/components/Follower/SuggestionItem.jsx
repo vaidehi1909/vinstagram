@@ -31,7 +31,7 @@ const SuggestionItem = (props) => {
       </ListItemAvatar>
       <ListItemText
         primary={user.userName}
-        secondary="Instagram recommended"
+        secondary="Vinstagram recommended"
         onClick={onItemClicked}
       />
     </ListItem>

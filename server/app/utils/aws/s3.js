@@ -100,7 +100,7 @@ const getS3SignedUrl = async (key, expiresIn = 3600) => {
   return await getSignedUrl(getS3Client(), command, { expiresIn });
 };
 
-const deleteFile = async (key) => {
+const deleteS3File = async (key) => {
   const command = new DeleteObjectCommand({
     Bucket: constants.AWS_S3_BUCKET,
     Key: key,
@@ -108,6 +108,11 @@ const deleteFile = async (key) => {
   await getS3Client().send(command);
 };
 
-const S3Service = { getS3SignedUrl, deleteFile, uploadFiles };
+const deleteMedia = async (url) => {
+  const key = new URL(url).pathname;
+  await deleteS3File(key);
+};
+
+const S3Service = { getS3SignedUrl, deleteMedia, uploadFiles };
 
 export default S3Service;

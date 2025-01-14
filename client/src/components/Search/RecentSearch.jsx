@@ -9,7 +9,7 @@ import {
   clearSearches,
 } from "../../../redux/user/recentSearchSlice";
 
-const RecentSearch = () => {
+const RecentSearch = ({ onClose }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const recentSearches = useSelector((state) => state.recentSearch.searches);
@@ -85,7 +85,7 @@ const RecentSearch = () => {
                 "&:hover": { bgcolor: "#fafafa" },
               }}
             >
-              <SearchItem user={user} />
+              <SearchItem user={user} onClose={onClose} />
               <IconButton
                 onClick={() => handleRemoveRecent(user._id)}
                 size="small"

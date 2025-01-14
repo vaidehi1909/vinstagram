@@ -7,12 +7,60 @@ import {
   Avatar,
   Button,
 } from "@mui/material";
+import FollowingButton from "./FollowingButton";
+
+const buttonProps = {
+  variant: "outlined",
+  size: "small",
+  sx: {
+    borderRadius: "10px",
+    textTransform: "none",
+    px: 2,
+    backgroundColor: "#f5f5f5",
+    borderColor: "#dbdbdb",
+
+    color: "#262626",
+    "&:hover": {
+      backgroundColor: "white",
+      borderColor: "#dbdbdb",
+    },
+  },
+};
+
+const ActionButton = (props) => {
+  const { actionName, ...restProps } = props;
+  return (
+    <Button {...buttonProps} {...restProps}>
+      {actionName}
+    </Button>
+  );
+};
+
+export const MyUserAction = (props) => {
+  const { user, modalType } = props;
+  const onRemove = () => {
+    props.onRemove(user._id);
+  };
+
+  if (modalType === "followers")
+    return <ActionButton actionName="Remove" onClick={onRemove} />;
+  return <FollowingButton user={user} buttonProps={buttonProps} />;
+};
+
+export const UserAction = (props) => {
+  const { user, currentUserId } = props;
+  const onFollow = () => {
+    props.onFollow(user._id);
+  };
+  if (user._id === currentUserId) return null; // dont show action for current user
+  if (user.isFollowing)
+    return <FollowingButton user={user} buttonProps={buttonProps} />;
+  return <ActionButton actionName="Follow" onClick={onFollow} />;
+};
 
 const FollowerItem = (props) => {
-  const { user, modalType } = props;
-  const onUnfollow = () => {
-    props.onUnFollow(user._id);
-  };
+  const { children, ...parentProps } = props;
+  const { user } = parentProps;
   return (
     <ListItem
       key={user._id}
@@ -57,30 +105,8 @@ const FollowerItem = (props) => {
         }
         sx={{ mr: 2 }}
       />
-      {user.status === "accepted" ? (
-        <Button
-          variant="outlined"
-          size="small"
-          disabled={modalType !== "followers"}
-          onClick={onUnfollow}
-          sx={{
-            borderRadius: "10px",
-            textTransform: "none",
-            px: 2,
-            backgroundColor: "#f5f5f5",
-            borderColor: "#dbdbdb",
-
-            color: "#262626",
-            "&:hover": {
-              backgroundColor: "white",
-              borderColor: "#dbdbdb",
-            },
-          }}
-        >
-          {modalType === "followers" ? "Remove" : "Following"}
-        </Button>
-      ) : (
-        <p>Requested</p>
+      {React.Children.map(children, (child) =>
+        React.cloneElement(child, parentProps)
       )}
     </ListItem>
   );

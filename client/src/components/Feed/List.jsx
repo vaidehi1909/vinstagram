@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Grid } from "@mui/material";
-import { useLazyGetFeedPostQuery } from "../../../redux/post/postApi";
+import { useGetFeedPostQuery } from "../../../redux/post/postApi";
 import FeedItem from "./Item";
+import LazyLoadingList from "../common/LazyLoadingList";
 
 const FeedList = () => {
-  const [posts, setPosts] = useState([]);
-  const [getFeedPost, { isLoading }] = useLazyGetFeedPostQuery();
-
-  // Replace this with your actual data fetching logic
-  useEffect(() => {
-    getFeedPost({ page: 1, limit: 10 }).then(({ data }) => setPosts(data));
-  }, []);
-
-  if (isLoading) {
-    return <h1>Loading...</h1>;
-  }
   return (
     <Grid
       container
@@ -26,8 +16,9 @@ const FeedList = () => {
         margin: "0 auto",
       }}
     >
-      {posts?.payload?.length > 0 &&
-        posts.payload.map((post) => <FeedItem key={post._id} post={post} />)}
+      <LazyLoadingList fetchQuery={useGetFeedPostQuery} limit={5}>
+        <FeedItem />
+      </LazyLoadingList>
     </Grid>
   );
 };

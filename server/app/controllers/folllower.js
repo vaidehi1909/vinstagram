@@ -20,6 +20,12 @@ class FollowerController {
       .catch((error) => errorResponse(res, error));
   }
 
+  async unfollow(req, res, next) {
+    return FollowerService.unfollow(req.user.id, req.params.followingId)
+      .then((data) => successResponse(res, "unfollowed", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
   async suggestions(req, res, next) {
     return FollowerService.suggestions(req.user.id)
       .then((data) => successResponse(res, "suggestions", data))
@@ -31,11 +37,26 @@ class FollowerController {
       .then((data) => successResponse(res, "follow requests", data))
       .catch((error) => errorResponse(res, error));
   }
-  async list(req, res, next) {
-    const userId = req.params.userid || req.user.id;
-    const type = req.query.type || "followers";
-    return FollowerService.list({ ...req.query, userId, type })
+
+  async followerlist(req, res, next) {
+    const currentUserId = req.user.id;
+    let userId = req.params.userid;
+    if (userId === "me") userId = currentUserId;
+    return FollowerService.followerlist({ ...req.query, userId, currentUserId })
       .then((data) => successResponse(res, "followers", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
+  async followinglist(req, res, next) {
+    const currentUserId = req.user.id;
+    let userId = req.params.userid;
+    if (userId === "me") userId = currentUserId;
+    return FollowerService.followinglist({
+      ...req.query,
+      userId,
+      currentUserId,
+    })
+      .then((data) => successResponse(res, "following", data))
       .catch((error) => errorResponse(res, error));
   }
 }

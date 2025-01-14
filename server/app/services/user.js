@@ -1,6 +1,7 @@
 import FollowerModel from "../models/follower.js";
 import PostModel from "../models/post.js";
 import UserModel from "../models/user.js";
+import S3Service from "../utils/aws/s3.js";
 import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
 import authService from "./auth.js";
 import bcrypt from "bcrypt";
@@ -42,7 +43,7 @@ const login = async (params) => {
   }
 };
 
-const userDetails = async (userId) => {
+const userDetails = async (userId, currentUserId) => {
   let user = await UserModel.findById(userId).select("-password");
   if (!user) {
     throw new Error("User not found");
@@ -59,6 +60,15 @@ const userDetails = async (userId) => {
     PostModel.find({ user: userId }).countDocuments(),
   ]);
   user = user.toObject();
+  if (currentUserId !== userId) {
+    user.isFollowing = await FollowerModel.exists({
+      follower: currentUserId,
+      following: userId,
+      status: "accepted",
+    })
+      .then((hasRecord) => !!hasRecord)
+      .catch(() => false);
+  }
   user.followersCount = followers;
   user.followingCount = following;
   user.postCount = post;
@@ -104,6 +114,47 @@ const userList = async (params) => {
   return getRecords({ ...params, filters, fields });
 };
 
+const updateProfileImage = async (userId, file) => {
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  user.profileImage = await S3Service.uploadFiles([file])
+    .then((res) => res?.[0]?.url)
+    .catch(() => new Error("File upload failed"));
+  return user.save().then((user) => {
+    return { profileImage: user.profileImage };
+  });
+};
+
+const deleteProfileImage = async (userId) => {
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  await S3Service.deleteMedia(user.profileImage).catch(() =>
+    console.error("File delete failed")
+  );
+  user.profileImage = "";
+  return user.save().then((user) => {
+    return { profileImage: user.profileImage };
+  });
+};
+
+const updateUserProfile = async (params) => {
+  const { userId } = params;
+
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  ["bio", "gender", "fullName", "accountType"].forEach((key) => {
+    if (params[key]) user[key] = params[key];
+  });
+  return user.save();
+};
+
 const UserService = {
   isUserExist,
   signup,
@@ -111,6 +162,9 @@ const UserService = {
   userDetails,
   resetPassword,
   userList,
+  updateUserProfile,
+  updateProfileImage,
+  deleteProfileImage,
 };
 
 export default UserService;

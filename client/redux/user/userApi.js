@@ -23,8 +23,46 @@ export const userApi = api.injectEndpoints({
       }),
       providesTags: ["UserDetails"],
     }),
+    resetPassword: builder.mutation({
+      query: (body) => ({
+        url: "/user/reset-password",
+        method: "POST",
+        body,
+      }),
+    }),
+    updateUserProfile: builder.mutation({
+      query: (body) => ({
+        url: "/user/profile",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["MyProfile"],
+    }),
+    updateProfileImage: builder.mutation({
+      query: (body) => ({
+        url: "/user/profile-image",
+        method: "POST",
+        body,
+        formData: true,
+      }),
+      invalidatesTags: ["MyProfile"],
+    }),
+    removeProfileImage: builder.mutation({
+      query: () => ({
+        url: "/user/profile-image",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["MyProfile"],
+    }),
   }),
 });
 
-export const { useSignupMutation, useSearchMutation, useGetUserDetailsQuery } =
-  userApi;
+export const {
+  useSignupMutation,
+  useSearchMutation,
+  useGetUserDetailsQuery,
+  useResetPasswordMutation,
+  useUpdateUserProfileMutation,
+  useUpdateProfileImageMutation,
+  useRemoveProfileImageMutation,
+} = userApi;

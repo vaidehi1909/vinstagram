@@ -30,7 +30,6 @@ const SuggestionsList = () => {
         }
       })
       .catch((error) => {
-        console.error(error);
         const errorMsg = error?.data?.message || "Something went wrong";
         dispatch(addToast({ message: errorMsg, severity: "error" }));
       });

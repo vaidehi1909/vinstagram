@@ -4,6 +4,25 @@ import FollowModal from "../Follower/Modal";
 import { useFollowRequestMutation } from "../../../redux/follower/followerApi";
 import { useDispatch } from "react-redux";
 import { addToast } from "../../../redux/toast/toastSlice";
+import FollowingButton from "../Follower/FollowingButton";
+
+const getButtonProps = (isMobile) => ({
+  variant: "contained",
+  size: isMobile ? "small" : "medium",
+  fullWidth: isMobile,
+  sx: {
+    borderRadius: "10px",
+    textTransform: "none",
+    backgroundColor: "#f5f5f5",
+    borderColor: "#dbdbdb",
+    color: "#262626",
+    "&:hover": {
+      backgroundColor: "white",
+      borderColor: "#dbdbdb",
+    },
+    minWidth: { xs: "100%", sm: "120px" },
+  },
+});
 
 const UserDetails = ({ user, isMobile }) => {
   const [followModalOpen, setFollowModalOpen] = useState(false);
@@ -36,7 +55,6 @@ const UserDetails = ({ user, isMobile }) => {
         }
       })
       .catch((error) => {
-        console.error(error);
         const errorMsg = error?.data?.message || "Something went wrong";
         dispatch(addToast({ message: errorMsg, severity: "error" }));
       });
@@ -93,26 +111,16 @@ const UserDetails = ({ user, isMobile }) => {
               width: { xs: "100%", sm: "auto" },
             }}
           >
-            <Button
-              variant="outlined"
-              size={isMobile ? "small" : "medium"}
-              fullWidth={isMobile}
-              sx={{
-                borderRadius: "10px",
-                textTransform: "none",
-                backgroundColor: "#f5f5f5",
-                borderColor: "#dbdbdb",
-                color: "#262626",
-                "&:hover": {
-                  backgroundColor: "white",
-                  borderColor: "#dbdbdb",
-                },
-                minWidth: { xs: "100%", sm: "120px" },
-              }}
-              onClick={onUserFollow}
-            >
-              Follow
-            </Button>
+            {user.isFollowing ? (
+              <FollowingButton
+                user={user}
+                buttonProps={getButtonProps(isMobile)}
+              />
+            ) : (
+              <Button {...getButtonProps(isMobile)} onClick={onUserFollow}>
+                Follow
+              </Button>
+            )}
           </Box>
         </Box>
 

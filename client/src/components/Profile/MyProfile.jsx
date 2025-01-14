@@ -9,10 +9,11 @@ import {
   useTheme,
   Skeleton,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import FollowModal from "../Follower/Modal";
 import { useNavigate } from "react-router-dom";
 import PostTab from "../Post/Tab";
+import { logOut } from "../../../redux/auth/authSlice";
 
 // const ProfileSkeleton = () => {
 //   return (
@@ -126,6 +127,7 @@ import PostTab from "../Post/Tab";
 
 const MyProfile = () => {
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate({ relative: false });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -147,6 +149,11 @@ const MyProfile = () => {
   const handleCloseModal = () => {
     setFollowModalOpen(false);
     setFollowModalType("");
+  };
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/login");
   };
 
   // if (isLoading || isFetching) {
@@ -254,6 +261,7 @@ const MyProfile = () => {
                 variant="outlined"
                 size={isMobile ? "small" : "medium"}
                 fullWidth={isMobile}
+                onClick={handleLogout}
                 sx={{
                   borderRadius: "10px",
                   textTransform: "none",
@@ -331,13 +339,14 @@ const MyProfile = () => {
       <Divider />
 
       {/* Tabs Section */}
-      <PostTab userId={user._id} isMobile={isMobile} />
+      <PostTab userId={user._id} isMobile={isMobile} isCurrentUser={true} />
 
       {followModalOpen && (
         <FollowModal
           open={followModalOpen}
           onClose={handleCloseModal}
           modalType={followModalType}
+          isCurrentUser={true}
           // userId={user._id}
         />
       )}

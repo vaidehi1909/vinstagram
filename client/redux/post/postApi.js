@@ -16,6 +16,7 @@ export const postApi = api.injectEndpoints({
         method: "GET",
         params,
       }),
+      keepUnusedDataFor: 5, // Cache unused data for 5 seconds
     }),
     likePost: builder.mutation({
       query: (postId) => ({
@@ -59,6 +60,7 @@ export const postApi = api.injectEndpoints({
 
 export const {
   useCreatPostMutation,
+  useGetFeedPostQuery,
   useLazyGetFeedPostQuery,
   useLikePostMutation,
   useUnlikePostMutation,

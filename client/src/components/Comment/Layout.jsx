@@ -55,22 +55,6 @@ const CommentLayout = (props) => {
   return (
     <>
       <CommentList comments={comments} />
-      {/* <Box sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
-        <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
-          <IconButton size="small">
-            <FavoriteBorderIcon />
-          </IconButton>
-          <IconButton size="small">
-            <ChatBubbleOutlineIcon />
-          </IconButton>
-          <IconButton size="small">
-            <SendIcon />
-          </IconButton>
-        </Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-          {post?.likesCount || 0} likes
-        </Typography>
-      </Box> */}
       <Box
         component="form"
         // onSubmit={handleSubmitComment}

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { addSearch } from "../../../redux/user/recentSearchSlice";
 import { useNavigate } from "react-router-dom";
 
-const SearchItem = ({ user }) => {
+const SearchItem = ({ user, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate({ relative: false });
   return (
@@ -18,6 +18,7 @@ const SearchItem = ({ user }) => {
       }}
       onClick={() => {
         dispatch(addSearch(user));
+        if (onClose) onClose();
         navigate(`/profile/${user._id}`);
       }}
     >

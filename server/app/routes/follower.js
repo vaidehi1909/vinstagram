@@ -13,9 +13,20 @@ router.post(
 );
 router.patch("/:followerId/accept", authenction, followerController.accept);
 router.post("/:followerId/reject", authenction, followerController.reject);
+router.post("/:followingId/unfollow", authenction, followerController.unfollow);
+
 router.get("/request/list", authenction, followerController.requestList);
 router.get("/suggestions", authenction, followerController.suggestions);
-router.get("/list", authenction, followerController.list);
-router.get("/list/:userid", authenction, followerController.list);
+
+router.get(
+  "/list/:userid/followers",
+  authenction,
+  followerController.followerlist
+);
+router.get(
+  "/list/:userid/following",
+  authenction,
+  followerController.followinglist
+);
 
 export default router;

@@ -95,11 +95,11 @@ const SearchDrawer = ({ open, onClose }) => {
         </Box>
 
         {!searchQuery ? (
-          <RecentSearch />
+          <RecentSearch onClose={onClose} />
         ) : (
           <Box sx={{ overflowY: "auto", height: "calc(100% - 140px)" }}>
             {(result?.data?.payload || []).map((user) => (
-              <SearchItem key={user._id} user={user} />
+              <SearchItem key={user._id} user={user} onClose={onClose} />
             ))}
           </Box>
         )}

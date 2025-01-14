@@ -41,18 +41,33 @@ export const followerApi = api.injectEndpoints({
         "FollowerList",
         "UserDetails",
         "UserProfile",
+        "MyProfile",
+      ],
+    }),
+    unfollow: builder.mutation({
+      query: (followingId) => ({
+        url: `/follower/${followingId}/unfollow`,
+        method: "POST",
+      }),
+      invalidatesTags: [
+        "request",
+        "FollowerList",
+        "UserDetails",
+        "UserProfile",
+        "MyProfile",
       ],
     }),
     list: builder.query({
       query: ({ userId, type }) => {
         let url = "/follower/list";
         if (userId) {
-          url += `/${userId}`;
+          url += `/${userId}/${type}`;
+        } else {
+          url += `/me/${type}`;
         }
         return {
           url,
           method: "GET",
-          params: { type },
         };
       },
       providesTags: ["FollowerList"],
@@ -66,5 +81,6 @@ export const {
   useGetRequestListQuery,
   useAcceptMutation,
   useRejectMutation,
+  useUnfollowMutation,
   useListQuery,
 } = followerApi;

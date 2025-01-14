@@ -54,6 +54,14 @@ const reject = async (userId, followerId) => {
   return FollowerModel.updateOne(filter, { status: "rejected" });
 };
 
+const unfollow = async (userId, followingId) => {
+  const filter = {
+    follower: new mongoose.Types.ObjectId(userId),
+    following: new mongoose.Types.ObjectId(followingId),
+  }; // { follower: userId, following: followerId };
+  return FollowerModel.deleteOne(filter);
+};
+
 const suggestions = async (userId) => {
   // get all followers id
   const followings = await FollowerModel.find({ follower: userId })
@@ -100,38 +108,78 @@ const getRecords = (params) => {
   return queryBuilder.build();
 };
 
-const list = async (params) => {
-  const { userId, type, status = "accepted", search } = params;
-  const filters =
-    type === "followers" ? { following: userId } : { follower: userId };
-  if (status) filters.status = status;
-  // if (search) filters.$or = [{ follower: search }, { following: search }];
-  const populateField = type === "followers" ? "follower" : "following";
-  const populate = [populateField, "fullName userName profileImage"];
-  const fields =
-    type === "followers" ? ["follower status"] : ["following status"];
+const followerlist = async (params) => {
+  const { userId, currentUserId } = params;
+  const filters = { following: userId, status: "accepted" };
+  const populate = ["follower", "fullName userName profileImage"];
+  const fields = ["follower status"];
   const sort = { createdAt: -1 }; // sort by latest
-  return getRecords({ ...params, filters, populate, fields, sort }).then(
-    async (records) => {
-      if (type === "followers") {
-        return records.map((record) => {
-          return { ...record.toObject()?.follower, status: record.status };
-        });
-      }
+  return getRecords({ ...params, filters, populate, fields, sort })
+    .then((records) => {
       return records.map((record) => {
-        return { ...record.toObject()?.following, status: record.status };
+        const newRecord = record.toObject();
+        return {
+          ...newRecord?.follower,
+          status: record.status,
+        };
       });
-    }
-  );
+    })
+    .then((records) => {
+      if (userId !== currentUserId)
+        return updateCurrentUserFollowing(records, currentUserId);
+      return records;
+    });
+};
+
+const followinglist = async (params) => {
+  const { userId, currentUserId } = params;
+  const filters = { follower: userId, status: "accepted" };
+  const populate = ["following", "fullName userName profileImage"];
+  const fields = ["following status"];
+  const sort = { createdAt: -1 }; // sort by latest
+  return getRecords({ ...params, filters, populate, fields, sort })
+    .then((records) => {
+      return records.map((record) => {
+        const newRecord = record.toObject();
+        return {
+          ...newRecord?.following,
+          status: record.status,
+        };
+      });
+    })
+    .then((records) => {
+      if (userId !== currentUserId)
+        return updateCurrentUserFollowing(records, currentUserId);
+      return records;
+    });
+};
+
+const updateCurrentUserFollowing = async (records, currentUserId) => {
+  const ids = records.map((rec) => rec._id);
+  const currentUserFollowings = await FollowerModel.find({
+    follower: currentUserId,
+    following: { $in: ids },
+    status: "accepted",
+  })
+    .select("following")
+    .then((rec) => {
+      return rec.map((rec) => rec.following.toString());
+    });
+  return records.map((rec) => {
+    rec.isFollowing = currentUserFollowings.includes(rec._id.toString());
+    return rec;
+  });
 };
 
 const FollowerService = {
   followRequest,
   accept,
   reject,
+  unfollow,
   suggestions,
   requestList,
-  list,
+  followerlist,
+  followinglist,
 };
 
 export default FollowerService;

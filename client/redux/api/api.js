@@ -12,5 +12,6 @@ export const api = createApi({
     "FollowerList",
     "UserDetails",
     "UserProfile",
+    "MyProfile",
   ],
 });

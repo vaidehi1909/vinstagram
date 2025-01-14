@@ -4,22 +4,17 @@ import {
   Typography,
   TextField,
   Button,
-  Avatar,
   Container,
   Select,
   MenuItem,
   FormControl,
   Switch,
-  Paper,
   styled,
 } from "@mui/material";
-
-// Custom styled components
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  backgroundColor: "#F8F9FA",
-}));
+import { useSelector, useDispatch } from "react-redux";
+import EditProfileImg from "./EditProfileImg";
+import { useUpdateUserProfileMutation } from "../../../redux/user/userApi";
+import { addToast } from "../../../redux/toast/toastSlice";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -27,16 +22,40 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const DisabledTextField = styled(TextField)(({ theme }) => ({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#f5f5f5",
-  },
-}));
+// const DisabledTextField = styled(TextField)(({ theme }) => ({
+//   "& .MuiOutlinedInput-root": {
+//     backgroundColor: "#f5f5f5",
+//   },
+// }));
 
 const EditProfile = () => {
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("Female");
-  const [suggestions, setSuggestions] = useState(true);
+  const { user } = useSelector((state) => state.auth);
+  const [bio, setBio] = useState(user.bio || "");
+  const [gender, setGender] = useState(user.gender || "");
+  const [isPrivate, setIsPrivate] = useState(user.accountType === "private");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const [updateUser] = useUpdateUserProfileMutation();
+
+  const onSubmit = () => {
+    setIsSubmitting(true);
+    updateUser({
+      bio,
+      gender,
+      accountType: isPrivate ? "private" : "public",
+    })
+      .unwrap()
+      .then(() => {
+        dispatch(addToast({ message: "Profile updated", severity: "success" }));
+      })
+      .catch((error) => {
+        const errorMsg = error?.data?.message || "Something went wrong";
+        dispatch(addToast({ message: errorMsg, severity: "error" }));
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -44,31 +63,9 @@ const EditProfile = () => {
         Edit profile
       </Typography>
 
-      <StyledPaper elevation={0}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ width: 56, height: 56 }} />
-          <Box>
-            <Typography variant="subtitle1" fontWeight="medium">
-              modi.vaidehi
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              modi vaidehi
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            sx={{
-              ml: "auto",
-              textTransform: "none",
-              borderRadius: 2,
-            }}
-          >
-            Change photo
-          </Button>
-        </Box>
-      </StyledPaper>
+      <EditProfileImg user={user} />
 
-      <Box sx={{ mb: 2 }}>
+      {/* <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 1 }}>
           Website
         </Typography>
@@ -76,9 +73,9 @@ const EditProfile = () => {
           fullWidth
           placeholder="Website"
           disabled
-          helperText="Editing your links is only available on mobile. Visit the Instagram app and edit your profile to change the websites in your bio."
+          helperText="Editing your links is only available on mobile. Visit the Vinstagram app and edit your profile to change the websites in your bio."
         />
-      </Box>
+      </Box> */}
 
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 1 }}>
@@ -87,6 +84,7 @@ const EditProfile = () => {
         <StyledTextField
           fullWidth
           multiline
+          disabled={isSubmitting}
           rows={4}
           placeholder="Bio"
           value={bio}
@@ -106,13 +104,14 @@ const EditProfile = () => {
         <FormControl fullWidth>
           <Select
             value={gender}
+            disabled={isSubmitting}
             onChange={(e) => setGender(e.target.value)}
             sx={{ backgroundColor: "#fff" }}
           >
-            <MenuItem value="Female">Female</MenuItem>
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Custom">Custom</MenuItem>
-            <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
+            <MenuItem value="female">Female</MenuItem>
+            <MenuItem value="male">Male</MenuItem>
+            <MenuItem value="custom">Custom</MenuItem>
+            <MenuItem value="other">Prefer not to say</MenuItem>
           </Select>
         </FormControl>
         <Typography
@@ -126,7 +125,7 @@ const EditProfile = () => {
 
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="medium" sx={{ mb: 1 }}>
-          Show account suggestions on profiles
+          Private account
         </Typography>
         <Box
           display="flex"
@@ -138,16 +137,34 @@ const EditProfile = () => {
             color="text.secondary"
             sx={{ maxWidth: "80%" }}
           >
-            Choose whether people can see similar account suggestions on your
-            profile, and whether your account can be suggested on other
-            profiles.
+            When your account is public, your profile and posts can be seen by
+            anyone, on or off Vinstagram, even if they don't have an Vinstagram
+            account. When your account is private, only the followers you
+            approve can see what you share, including your photos or videos on
+            hashtag and location pages, and your followers and following lists.
+            Certain info on your profile, like your profile picture and
+            username, is visible to everyone on and off Vinstagram.
           </Typography>
           <Switch
-            checked={suggestions}
-            onChange={(e) => setSuggestions(e.target.checked)}
+            checked={isPrivate}
+            disabled={isSubmitting}
+            onChange={(e) => setIsPrivate(e.target.checked)}
             color="primary"
           />
         </Box>
+      </Box>
+
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          disabled={isSubmitting}
+          sx={{ textTransform: "none", borderRadius: 2 }}
+          onClick={onSubmit}
+        >
+          Submit
+        </Button>
       </Box>
     </Container>
   );

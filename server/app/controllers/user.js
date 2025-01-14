@@ -24,8 +24,9 @@ class UserController {
   }
 
   async userDetails(req, res, next) {
-    const id = req.params.id || req.user.id;
-    return UserService.userDetails(id)
+    const currentUserId = req.user.id;
+    const id = req.params.id || currentUserId;
+    return UserService.userDetails(id, currentUserId)
       .then((data) => successResponse(res, "user details", data))
       .catch((error) => errorResponse(res, error));
   }
@@ -42,6 +43,31 @@ class UserController {
   async userList(req, res, next) {
     return UserService.userList({ ...req.body, userId: req.user.id })
       .then((data) => successResponse(res, "user list", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
+  async updateProfileImage(req, res, next) {
+    const userId = req.user.id;
+    return UserService.updateProfileImage(userId, req.file)
+      .then((data) => successResponse(res, "User profile imgage updated", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
+  async deleteProfileImage(req, res, next) {
+    const userId = req.user.id;
+    return UserService.deleteProfileImage(userId)
+      .then((data) => successResponse(res, "User profile imgage deleted", data))
+      .catch((error) => errorResponse(res, error));
+  }
+
+  async updateUserProfile(req, res, next) {
+    const params = { ...req.body, userId: req.user.id };
+    // validationService.validateParams(params, requiredParams);
+
+    return UserService.updateUserProfile(params)
+      .then((data) =>
+        successResponse(res, "User profile details updated", data)
+      )
       .catch((error) => errorResponse(res, error));
   }
 }
