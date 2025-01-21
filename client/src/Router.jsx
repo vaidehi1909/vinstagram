@@ -6,9 +6,6 @@ const Router = createBrowserRouter(
   [
     {
       element: <App />,
-      loader: () => {
-        return <div>Loading</div>;
-      },
       errorElement: <div>Something Went Wrong</div>,
       children: [
         {

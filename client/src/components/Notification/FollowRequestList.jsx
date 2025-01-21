@@ -101,69 +101,6 @@ const FollowRequestItem = ({ user }) => {
 };
 
 const FollowRequestList = ({ onClose }) => {
-  // const followRequests = [
-  //   {
-  //     username: "sandhyaputrapalak",
-  //     name: "पवक કમલેશ પટેલ | संकल्प 🌿 🔱 IN",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "dr_dev12",
-  //     name: "Dev",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "siddharth_1505_",
-  //     name: "Siddharth Patel",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "shuam_chinu",
-  //     name: "Shubham Chinchkar",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "theanishpatel97",
-  //     name: "ANISH PATEL 👑",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "miken_gandhi",
-  //     name: "Miken k Gandhi",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "hardikmodi1607",
-  //     name: "Hardik Modi",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "ronak.modi_03",
-  //     name: "Ronak Modi",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "jatin._.gohil",
-  //     name: "JATIN",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "abhishekgandhi_29",
-  //     name: "Abhishek Gandhi",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "suhaan__shaikh",
-  //     name: "S U H A A N S H A I K H",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  //   {
-  //     username: "djkartik_",
-  //     name: "DJ Kartik",
-  //     avatar: "/api/placeholder/44/44",
-  //   },
-  // ];
-
   const { requestList: followRequests } = useSelector(
     (state) => state.follower
   );

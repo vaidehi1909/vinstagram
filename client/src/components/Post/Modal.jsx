@@ -23,7 +23,7 @@ const PostModal = ({ open, onClose }) => {
           onClose();
         }
       }}
-      aria-labelledby="instagram-post-modal"
+      aria-labelledby="vinstagram-post-modal"
     >
       <Box sx={modalStyle}>
         <PostForm onClose={onClose} />

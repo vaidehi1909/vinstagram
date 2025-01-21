@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLazyUserProfileQuery } from "./auth/authApi";
+import AppSkeleton from "../src/AppSkeleton";
 
 const withAuth = (WrappedComponent) => {
   const Wrapper = (props) => {
@@ -30,13 +31,7 @@ const withAuth = (WrappedComponent) => {
     }, [token]);
 
     if (loading) {
-      return (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ); // Show loading state while checking authentication
+      return <AppSkeleton />; // Show loading state while checking authentication
     }
 
     return <WrappedComponent {...props} />;
