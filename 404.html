@@ -1,26 +1,22 @@
-<!-- 404.html -->
-<!DOCTYPE html>
-<html>
+
+
+<!doctype html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Redirecting...</title>
-    <script>
-      sessionStorage.redirect = location.href;
-    </script>
-    <meta http-equiv="refresh" content="0;URL='/'">
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vinstagram/vite.svg" />
+    <link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vinstagram</title>
+    <script type="module" crossorigin src="/vinstagram/assets/index-xauWBcVr.js"></script>
+    <link rel="stylesheet" crossorigin href="/vinstagram/assets/index-Bojd_Loi.css">
   </head>
-  <body>
-    Redirecting...
+  <body style="margin: 0%; height: 100vh;">
+    <div id="root"></div>
   </body>
 </html>
-
-<!-- Add this script to the top of your index.html (right after the <head> tag) -->
-<script>
-  (function() {
-    const redirect = sessionStorage.redirect;
-    delete sessionStorage.redirect;
-    if (redirect && redirect !== location.href) {
-      history.replaceState(null, null, redirect);
-    }
-  })();
-</script>
