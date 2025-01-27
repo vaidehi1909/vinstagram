@@ -6,12 +6,6 @@ import BaseQueryBuilder from "../utils/baseQueryBuilder.js";
 import { validateDuplicate } from "../utils/responseHelper.js";
 
 const followRequest = async (userId, followingId) => {
-  const query = { follower: userId, following: followingId };
-  FollowerModel.create({
-    follower: userId,
-    following: followingId,
-    status: "requested",
-  });
   return FollowerModel.create({
     follower: userId,
     following: followingId,
