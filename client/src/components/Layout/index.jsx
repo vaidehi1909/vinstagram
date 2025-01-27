@@ -61,10 +61,12 @@ const Header = () => {
           </IconButton>
         </Box>
       </Box>
-      <NotificationDrawer
-        open={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-      />
+      {isNotificationOpen && (
+        <NotificationDrawer
+          open={isNotificationOpen}
+          onClose={() => setIsNotificationOpen(false)}
+        />
+      )}
     </>
   );
 };

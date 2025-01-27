@@ -127,8 +127,8 @@ const FollowRequestList = ({ onClose }) => {
       </AppBar>
 
       <List sx={{ pt: 0 }}>
-        {followRequests.map((user, index) => (
-          <FollowRequestItem key={index} user={user} />
+        {followRequests.map((user) => (
+          <FollowRequestItem key={user._id} user={user} />
         ))}
       </List>
     </Box>

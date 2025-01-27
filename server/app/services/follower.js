@@ -45,7 +45,7 @@ const reject = async (userId, followerId) => {
     following: new mongoose.Types.ObjectId(userId),
     follower: new mongoose.Types.ObjectId(followerId),
   }; // { follower: userId, following: followerId };
-  return FollowerModel.updateOne(filter, { status: "rejected" });
+  return FollowerModel.deleteOne(filter);
 };
 
 const unfollow = async (userId, followingId) => {

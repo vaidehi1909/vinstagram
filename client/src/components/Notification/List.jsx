@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import {
   Typography,
@@ -17,40 +17,44 @@ import {
 } from "../../../helper/checkDateRange";
 import { Close as CloseIcon } from "@mui/icons-material";
 
+const groupNotifications = (notifications) => {
+  const todayNotifications = [];
+  const thisWeekNotifications = [];
+  const thisMonthNotifications = [];
+  const olderNotifications = [];
+
+  notifications.forEach((notification) => {
+    const createdAt = new Date(notification.createdAt);
+
+    if (isToday(createdAt)) {
+      todayNotifications.push(notification);
+    } else if (isThisWeek(createdAt)) {
+      thisWeekNotifications.push(notification);
+    } else if (isThisMonth(createdAt)) {
+      thisMonthNotifications.push(notification);
+    } else {
+      olderNotifications.push(notification);
+    }
+  });
+
+  return {
+    today: todayNotifications,
+    thisWeek: thisWeekNotifications,
+    thisMonth: thisMonthNotifications,
+    older: olderNotifications,
+  };
+};
+
 const NotificationList = ({ onToggle, onClose }) => {
   const { notification } = useSelector((state) => state.notification);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // Group notifications
-  const groupNotifications = (notifications) => {
-    const todayNotifications = [];
-    const thisWeekNotifications = [];
-    const thisMonthNotifications = [];
-    const olderNotifications = [];
 
-    notifications.forEach((notification) => {
-      const createdAt = new Date(notification.createdAt);
-
-      if (isToday(createdAt)) {
-        todayNotifications.push(notification);
-      } else if (isThisWeek(createdAt)) {
-        thisWeekNotifications.push(notification);
-      } else if (isThisMonth(createdAt)) {
-        thisMonthNotifications.push(notification);
-      } else {
-        olderNotifications.push(notification);
-      }
-    });
-
-    return {
-      today: todayNotifications,
-      thisWeek: thisWeekNotifications,
-      thisMonth: thisMonthNotifications,
-      older: olderNotifications,
-    };
-  };
-
-  const groupedNotifications = groupNotifications(notification);
+  const groupedNotifications = useMemo(
+    () => groupNotifications(notification),
+    [notification]
+  );
 
   const { requestList } = useSelector((state) => state.follower);
   return (
@@ -89,7 +93,7 @@ const NotificationList = ({ onToggle, onClose }) => {
               }  ${
                 requestList?.length - 1 === 0 ? "" : requestList?.length - 1
               } requests`,
-              avatar: "/api/placeholder/32/32",
+              avatar: requestList?.[0]?.follower?.profileImage,
               time: "",
             }}
           />
@@ -108,8 +112,8 @@ const NotificationList = ({ onToggle, onClose }) => {
             >
               Today
             </Typography>
-            {groupedNotifications.today.map((item, index) => (
-              <NotificationItem key={index} item={item} />
+            {groupedNotifications.today.map((item) => (
+              <NotificationItem key={item._id} item={item} />
             ))}
 
             <Divider />
@@ -125,8 +129,8 @@ const NotificationList = ({ onToggle, onClose }) => {
             >
               This week
             </Typography>
-            {groupedNotifications.thisWeek.map((item, index) => (
-              <NotificationItem key={index} item={item} />
+            {groupedNotifications.thisWeek.map((item) => (
+              <NotificationItem key={item._id} item={item} />
             ))}
             <Divider />
           </>
@@ -141,8 +145,8 @@ const NotificationList = ({ onToggle, onClose }) => {
             >
               This week
             </Typography>
-            {groupedNotifications.thisMonth.map((item, index) => (
-              <NotificationItem key={index} item={item} />
+            {groupedNotifications.thisMonth.map((item) => (
+              <NotificationItem key={item._id} item={item} />
             ))}
             <Divider />
           </>
@@ -157,8 +161,8 @@ const NotificationList = ({ onToggle, onClose }) => {
             >
               This week
             </Typography>
-            {groupedNotifications.older.map((item, index) => (
-              <NotificationItem key={index} item={item} />
+            {groupedNotifications.older.map((item) => (
+              <NotificationItem key={item._id} item={item} />
             ))}
             <Divider />
           </>

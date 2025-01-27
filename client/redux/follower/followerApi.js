@@ -29,7 +29,7 @@ export const followerApi = api.injectEndpoints({
         url: `/follower/${followerId}/accept`,
         method: "PATCH",
       }),
-      invalidatesTags: ["request"],
+      invalidatesTags: ["request", "Notification", "FollowerList", "MyProfile"],
     }),
     reject: builder.mutation({
       query: (followerId) => ({
@@ -42,6 +42,7 @@ export const followerApi = api.injectEndpoints({
         "UserDetails",
         "UserProfile",
         "MyProfile",
+        "Notification",
       ],
     }),
     unfollow: builder.mutation({
@@ -79,6 +80,7 @@ export const {
   useGetSuggestionsQuery,
   useFollowRequestMutation,
   useGetRequestListQuery,
+  useLazyGetRequestListQuery,
   useAcceptMutation,
   useRejectMutation,
   useUnfollowMutation,

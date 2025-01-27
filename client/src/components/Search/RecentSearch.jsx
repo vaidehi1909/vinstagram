@@ -16,7 +16,7 @@ const RecentSearch = ({ onClose }) => {
 
   // Load recent searches for the logged-in user
   useEffect(() => {
-    if (user._id) {
+    if (user?._id) {
       dispatch(loadSearches(user._id));
     }
   }, [user, dispatch]);

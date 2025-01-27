@@ -3,31 +3,25 @@ import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@mui/material";
 import NotificationList from "./List";
 import FollowRequestList from "./FollowRequestList";
-import { useGetRequestListQuery } from "../../../redux/follower/followerApi";
+import { useLazyGetRequestListQuery } from "../../../redux/follower/followerApi";
 import {
-  useGetNotificationQuery,
+  useLazyGetNotificationQuery,
   useMarkAsReadMutation,
 } from "../../../redux/notification/notificationApi";
 
 const NotificationDrawer = (props) => {
   const [isFollowRequestOpen, setIsFollowRequestOpen] = useState(false);
   const [markAsRead] = useMarkAsReadMutation();
-  useEffect(() => {
-    markAsRead();
-  }, []);
-  const {
-    data: requestList,
-    isLoading,
-    isError,
-    error,
-  } = useGetRequestListQuery();
+  const [myRequestList] = useLazyGetRequestListQuery();
+  const [myNotifications] = useLazyGetNotificationQuery();
 
-  const {
-    data: notificationList,
-    isLoading: isNotificationLoading,
-    isError: isNotificationError,
-    error: notificationError,
-  } = useGetNotificationQuery();
+  useEffect(() => {
+    if (props.open) {
+      myRequestList();
+      myNotifications();
+      markAsRead();
+    }
+  }, [props.open]);
 
   const onToggle = (item) => {
     if (item.action === "follow_requests") {

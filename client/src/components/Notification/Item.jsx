@@ -4,8 +4,22 @@ import React from "react";
 
 import { ListItem, Typography, Avatar, Button, Box } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
+import {
+  useAcceptMutation,
+  useRejectMutation,
+} from "../../../redux/follower/followerApi";
 
 const NotificationItem = ({ item }) => {
+  const [requestReject] = useRejectMutation();
+  const [requestAccept] = useAcceptMutation();
+
+  const handleReject = () => {
+    requestReject(item?.actor?._id);
+  };
+  const handleAccept = () => {
+    requestAccept({ followerId: item?.actor?._id });
+  };
+
   const isLikeNotification = item.type === "like";
 
   if (item.type === "request" && item.request?.status === "rejected") return;
@@ -19,7 +33,7 @@ const NotificationItem = ({ item }) => {
       }}
     >
       <Avatar
-        src={item.avatar}
+        src={item?.actor?.profileImage}
         alt={item?.actor?.userName}
         sx={{ width: 40, height: 40 }}
       >
@@ -49,6 +63,7 @@ const NotificationItem = ({ item }) => {
                 variant="contained"
                 size="small"
                 sx={{ textTransform: "none", bgcolor: "#0095F6" }}
+                onClick={handleAccept}
               >
                 Confirm
               </Button>
@@ -56,6 +71,7 @@ const NotificationItem = ({ item }) => {
                 variant="outlined"
                 size="small"
                 sx={{ textTransform: "none" }}
+                onClick={handleReject}
               >
                 Delete
               </Button>

@@ -20,5 +20,8 @@ export const notificationApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetNotificationQuery, useMarkAsReadMutation } =
-  notificationApi;
+export const {
+  useGetNotificationQuery,
+  useLazyGetNotificationQuery,
+  useMarkAsReadMutation,
+} = notificationApi;
