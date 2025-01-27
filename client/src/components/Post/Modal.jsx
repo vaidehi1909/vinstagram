@@ -23,6 +23,11 @@ const PostModal = ({ open, onClose }) => {
           onClose();
         }
       }}
+      sx={{
+        // padding: { xs: 2, sm: 2, md: 2 },
+        // paddingX: { xs: 2, sm: 2, md: 2 },
+        margin: { xs: 2, sm: 2, md: 2 },
+      }}
       aria-labelledby="vinstagram-post-modal"
     >
       <Box sx={modalStyle}>

@@ -1,6 +1,13 @@
 import React from "react";
 
-import { Typography, Box, Divider } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Divider,
+  useTheme,
+  useMediaQuery,
+  IconButton,
+} from "@mui/material";
 import NotificationItem from "./Item";
 import { useSelector } from "react-redux";
 import {
@@ -8,9 +15,12 @@ import {
   isThisWeek,
   isToday,
 } from "../../../helper/checkDateRange";
-const NotificationList = ({ onToggle }) => {
-  const { notification } = useSelector((state) => state.notification);
+import { Close as CloseIcon } from "@mui/icons-material";
 
+const NotificationList = ({ onToggle, onClose }) => {
+  const { notification } = useSelector((state) => state.notification);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   // Group notifications
   const groupNotifications = (notifications) => {
     const todayNotifications = [];
@@ -46,8 +56,21 @@ const NotificationList = ({ onToggle }) => {
   return (
     <>
       <Box sx={{ px: 2, py: 3 }}>
-        <Typography variant="h6" fontWeight="bold">
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          sx={{ justifyContent: "space-between", display: "flex" }}
+        >
           Notifications
+          {isMobile && (
+            <IconButton
+              size="small"
+              onClick={onClose}
+              sx={{ color: "#8e8e8e" }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
         </Typography>
       </Box>
 

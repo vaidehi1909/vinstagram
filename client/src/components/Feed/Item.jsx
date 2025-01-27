@@ -121,12 +121,13 @@ const FeedItem = ({ item: post }) => {
   };
 
   return (
-    <Grid item xs={12} key={post._id}>
+    <Grid item xs={12} sx={{ marginBottom: 2 }} key={post._id}>
       <Card
         sx={{
           borderRadius: 0,
           boxShadow: 0,
-          border: "1px solid #dbdbdb",
+
+          borderTop: "1px solid #dbdbdb",
         }}
       >
         {/* Post Header */}
@@ -155,6 +156,7 @@ const FeedItem = ({ item: post }) => {
             cursor: "pointer",
             backgroundColor: "#fafafa",
             overflow: "hidden",
+            border: "1px solid #dbdbdb",
           }}
           onDoubleClick={() => handleLike()}
         >

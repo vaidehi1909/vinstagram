@@ -61,7 +61,7 @@ const NotificationDrawer = (props) => {
             }
           />
         ) : (
-          <NotificationList onToggle={onToggle} />
+          <NotificationList onToggle={onToggle} onClose={props.onClose} />
         )}
       </DialogContent>
     </Dialog>

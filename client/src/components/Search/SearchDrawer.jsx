@@ -6,8 +6,15 @@ import {
   IconButton,
   Box,
   Typography,
+  useTheme,
+  useMediaQuery,
+  Divider,
 } from "@mui/material";
-import { Close as CloseIcon, Search as SearchIcon } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  Search as SearchIcon,
+  ArrowBack as ArrowBackIcon,
+} from "@mui/icons-material";
 import { useSearchMutation } from "../../../redux/user/userApi";
 import SearchItem from "./Item";
 import RecentSearch from "./RecentSearch";
@@ -15,12 +22,15 @@ import debounce from "lodash.debounce";
 
 const SearchDrawer = ({ open, onClose }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [searchUserApi, result] = useSearchMutation();
 
   const fetchResults = async (search) => {
     searchUserApi({ search });
   };
+
   // Debounced version of fetchResults
   const debouncedFetchResults = useMemo(() => debounce(fetchResults, 500), []);
 
@@ -52,10 +62,26 @@ const SearchDrawer = ({ open, onClose }) => {
         <Box sx={{ p: 3, pb: 2 }}>
           <Typography
             variant="h6"
-            sx={{ mb: 3, fontSize: 24, fontWeight: "normal" }}
+            sx={{
+              mb: 3,
+              fontSize: 24,
+              fontWeight: "normal",
+              justifyContent: "space-between",
+              display: "flex",
+            }}
           >
             Search
+            {isMobile && (
+              <IconButton
+                size="small"
+                onClick={onClose}
+                sx={{ color: "#8e8e8e" }}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
           </Typography>
+
           <Box sx={{ position: "relative", mb: 2 }}>
             <Box
               sx={{
