@@ -9,7 +9,9 @@ const withAuth = (WrappedComponent) => {
     const [loading, setLoading] = useState(true);
 
     const token = useSelector((state) => state.auth?.token);
-    const [getUserProfile] = useLazyUserProfileQuery();
+    const user = useSelector((state) => state.auth?.user);
+    const [getUserProfile, { isLoading, isFetching }] =
+      useLazyUserProfileQuery();
     const navigate = useNavigate();
 
     // Perform authentication check here
@@ -18,7 +20,7 @@ const withAuth = (WrappedComponent) => {
       if (!token) {
         navigate("/login"); // Redirect to login page if not authenticated
       }
-      if (loading && token) {
+      if (!user && loading && token && !isLoading && !isFetching) {
         getUserProfile().then((res) => {
           if (res?.isError) {
             // setLoading(false); // Set loading to false if error
@@ -28,7 +30,10 @@ const withAuth = (WrappedComponent) => {
           }
         });
       }
-    }, [token]);
+      if (user && loading) {
+        setLoading(false);
+      }
+    }, [token, user]);
 
     if (loading) {
       return <AppSkeleton />; // Show loading state while checking authentication
