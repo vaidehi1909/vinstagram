@@ -13,10 +13,12 @@ import * as Yup from "yup";
 import FormField from "../../components/common/FormField";
 import { useSignupMutation } from "../../../redux/user/userApi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const signup = () => {
   const theme = useTheme();
   const [signup] = useSignupMutation();
+  const navigate = useNavigate();
   const token = useSelector((state) => state.auth?.token);
 
   useEffect(() => {
@@ -38,6 +40,10 @@ const signup = () => {
     }),
     onSubmit: async (values) => {
       const res = await signup(values).unwrap();
+
+      if (res.status === 200) {
+        navigate("/login");
+      }
     },
   });
 
