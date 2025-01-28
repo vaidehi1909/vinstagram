@@ -181,7 +181,7 @@ const Login = () => {
       >
         <Typography variant="body1">
           Don’t have an account?{" "}
-          <Link href="/signup" underline="hover" sx={{ fontWeight: 500 }}>
+          <Link href="signup" underline="hover" sx={{ fontWeight: 500 }}>
             Sign up
           </Link>
         </Typography>
